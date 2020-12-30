@@ -5,3 +5,12 @@
 .banner .nav a {
   @extend .nav-link;
 }
+
+.banner {
+  display: flex;
+  padding: 30px;
+}
+
+.banner .nav-primary {
+  margin-left: auto;
+}
