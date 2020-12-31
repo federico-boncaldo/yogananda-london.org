@@ -9,8 +9,9 @@
 .banner {
   display: flex;
   padding: 30px;
-}
 
-.banner .nav-primary {
-  margin-left: auto;
+  .nav-primary {
+    margin-left: auto;
+    display: flex;
+  }
 }
