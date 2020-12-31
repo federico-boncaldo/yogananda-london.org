@@ -1,0 +1,17 @@
+.btn-orange {
+  padding: 7px 16px;
+  background: #fd8026;
+  border-radius: 4px;
+  border: none;
+  display: flex;
+  margin-left: auto;
+  height: max-content;
+
+  a {
+    color: #fff;
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
+}
