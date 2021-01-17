@@ -1,4 +1,4 @@
-.btn-orange {
+button.btn-orange {
   padding: 7px 16px;
   background: #fd8026;
   border-radius: 4px;
@@ -8,7 +8,7 @@
   height: max-content;
 
   a {
-    color: #fff;
+    color: #fff !important;
 
     &:hover {
       text-decoration: none;
