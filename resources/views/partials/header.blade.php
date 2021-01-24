@@ -1,6 +1,6 @@
 <header class="banner">
   <a class="brand" href="{{ home_url('/') }}">
-    <img alt="{{ get_bloginfo('name', 'display') }}" src="@asset('images/SRF_London_Centre_Logo.png')">
+    <img alt="{{ get_bloginfo('name', 'display') }}" src="@asset('images/London_Centre_Logo_white.png')">
   </a>
   <nav class="nav-primary">
     @if (has_nav_menu('primary_navigation'))
