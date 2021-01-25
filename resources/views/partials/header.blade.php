@@ -11,6 +11,6 @@
     @if (has_nav_menu('primary_navigation'))
       {!! wp_nav_menu(['theme_location' => 'primary_navigation', 'menu_class' => 'nav']) !!}
     @endif
-    <button class="btn-orange"><a href="#">Donate</a></button>
+    <button class="btn-orange donate-button"><a href="#">Donate</a></button>
   </nav>
 </header>
