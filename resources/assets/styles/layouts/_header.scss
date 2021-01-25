@@ -54,3 +54,15 @@
     font-size: 20px;
   }
 }
+
+@media screen and (min-width: 0) and (max-width: 762px) {
+  .btn-orange.donate-button {
+    display: none;
+  }
+}
+
+@media screen and (min-width: 763px) {
+  .btn-orange.donate-button {
+    display: block;
+  }
+}
