@@ -10,7 +10,7 @@
       <div class="col-md-2">
         @php dynamic_sidebar('sidebar-footer-3') @endphp
       </div>
-      <div class="col-md-4 text">
+      <div class="col-md-4 copyright">
         @php dynamic_sidebar('sidebar-footer-4') @endphp
       </div>
     </div>
