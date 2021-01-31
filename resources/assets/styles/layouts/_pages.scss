@@ -2,14 +2,9 @@ body {
   margin-top: -8px;
 }
 
-.container.front-page {
-  max-width: 100%;
-  padding: 0;
-}
-
-.container.other-page {
+.content-page {
   .page-header {
-    margin-bottom: 560px;
+    margin-bottom: 60px;
 
     h1 {
       font-size: 40px;
@@ -19,13 +14,87 @@ body {
       margin-top: 74px;
       margin-bottom: 74px;
     }
+  }
 
-    .blue-bar {
-      background-color: #0a2c58;
-      width: 100%;
-      height: 436px;
-      position: absolute;
-      left: 0;
+  .image-bar {
+    background-color: #0a2c58;
+    width: 100%;
+    height: 436px;
+    margin-bottom: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    img {
+      height: 100%;
+      width: auto;
+    }
+  }
+}
+
+.navigation-page {
+  .container {
+    max-width: 100%;
+    padding: 0;
+
+    .wp-block-media-text {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      flex-flow: wrap;
+
+      &__content {
+        margin: 20px;
+        width: 48vw;
+        height: auto;
+
+        p {
+          padding: 10px;
+          line-height: normal;
+        }
+      }
+
+      &__media {
+        width: 48vw;
+        height: auto;
+
+        img {
+          height: auto;
+          width: 100%;
+        }
+      }
+
+      @media screen and (min-width: 0) and (max-width: 1000px) {
+        &__content {
+          width: 100vw;
+          height: auto;
+        }
+
+        &__media {
+          width: 100vw;
+          height: auto;
+
+          img {
+            height: auto;
+            width: 100%;
+          }
+        }
+      }
+    }
+
+    .wp-block-cover {
+      min-height: 100vh;
+
+      div {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-flow: row wrap;
+
+        p {
+          width: 60%;
+        }
+      }
     }
   }
 }

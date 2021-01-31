@@ -11,14 +11,6 @@
   padding: 30px;
   width: 100%;
 
-  &.front-page {
-    display: flex;
-    padding: 30px;
-    position: absolute;
-    z-index: 10;
-    width: 100%;
-  }
-
   .nav-primary {
     margin-left: auto;
     display: flex;
@@ -30,8 +22,18 @@
       font-size: 18px;
       padding: 0 20px;
     }
+  }
+}
 
-    &.front-page {
+.navigation-page {
+  .banner {
+    display: flex;
+    padding: 30px;
+    position: absolute;
+    z-index: 10;
+    width: 100%;
+
+    .nav-primary {
       a {
         color: #fff;
       }
@@ -39,29 +41,13 @@
   }
 }
 
-.title-section {
-  min-height: 800px;
-
-  p {
-    display: flex;
-    max-width: 50%;
-    margin-left: auto;
-  }
-
-  .title-section--inspirational-quote {
-    padding-top: 100px;
-    padding-right: 50px;
-    font-size: 20px;
-  }
-}
-
-@media screen and (min-width: 0) and (max-width: 762px) {
+@media screen and (min-width: 0) and (max-width: 1000px) {
   .btn-orange.donate-button {
     display: none;
   }
 }
 
-@media screen and (min-width: 763px) {
+@media screen and (min-width: 1001px) {
   .btn-orange.donate-button {
     display: block;
   }

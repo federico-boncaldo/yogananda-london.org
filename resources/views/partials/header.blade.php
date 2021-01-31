@@ -1,13 +1,13 @@
-<header class="banner {{ is_front_page() ? 'front-page':'' }}">
+<header class="banner">
   <a class="brand" href="{{ home_url('/') }}">
-    @if (is_front_page())
+    @if (get_page_template_slug() == 'views/template-navigation-page.blade.php')
       <img alt="{{ get_bloginfo('name', 'display') }}" src="@asset('images/London_Centre_Logo_white.png')">
     @else
-    <img alt="{{ get_bloginfo('name', 'display') }}" src="@asset('images/SRF_London_Centre_Logo.png')">
+      <img alt="{{ get_bloginfo('name', 'display') }}" src="@asset('images/SRF_London_Centre_Logo.png')">
     @endif
   </a>
 
-  <nav class="nav-primary {{ is_front_page() ? 'front-page':'' }}">
+  <nav class="nav-primary">
     @if (has_nav_menu('primary_navigation'))
       {!! wp_nav_menu(['theme_location' => 'primary_navigation', 'menu_class' => 'nav']) !!}
     @endif
