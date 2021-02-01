@@ -98,9 +98,10 @@
         position: relative;
 
         img {
-          min-height: 100vh;
+          height: 100vh;
           width: 100vw;
           object-fit: cover;
+          overflow: hidden;
         }
 
         .overlay-title {
@@ -114,6 +115,7 @@
             font-size: 30px;
             font-style: italic;
             margin-bottom: 50px;
+            text-shadow: 2px 2px 4px #000;
           }
 
           .quote-author {
