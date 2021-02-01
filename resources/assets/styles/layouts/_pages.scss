@@ -39,7 +39,7 @@
 
     .main {
       .wp-block-media-text {
-        min-height: 100vh;
+        height: 100vh;
         display: flex;
         align-items: center;
         flex-flow: wrap;
@@ -82,6 +82,12 @@
               width: 100%;
             }
           }
+        }
+      }
+
+      @media screen and (min-width: 0) and (max-width: 1000px) {
+        .wp-block-media-text {
+          height: auto;
         }
       }
 
