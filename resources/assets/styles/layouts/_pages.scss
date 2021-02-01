@@ -88,6 +88,10 @@
         }
       }
 
+      .wp-block-media-text.has-media-on-the-right {
+        flex-direction: row-reverse;
+      }
+
       @media screen and (min-width: 0) and (max-width: 1000px) {
         .wp-block-media-text {
           height: auto;
