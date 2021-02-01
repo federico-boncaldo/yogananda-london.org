@@ -1,6 +1,6 @@
-body {
-  margin-top: -8px;
-}
+// body {
+//   margin-top: -8px;
+// }
 
 .content-page {
   .page-header {
@@ -37,41 +37,28 @@ body {
     max-width: 100%;
     padding: 0;
 
-    .wp-block-media-text {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      flex-flow: wrap;
+    .main {
+      .wp-block-media-text {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        flex-flow: wrap;
+        padding-top: 20px;
+        padding-bottom: 20px;
 
-      &__content {
-        margin: 20px;
-        width: 48vw;
-        height: auto;
-
-        p {
-          padding: 10px;
-          line-height: normal;
-        }
-      }
-
-      &__media {
-        width: 48vw;
-        height: auto;
-
-        img {
-          height: auto;
-          width: 100%;
-        }
-      }
-
-      @media screen and (min-width: 0) and (max-width: 1000px) {
         &__content {
-          width: 100vw;
+          margin: 20px;
+          width: 48vw;
           height: auto;
+
+          p {
+            padding: 10px;
+            line-height: normal;
+          }
         }
 
         &__media {
-          width: 100vw;
+          width: 48vw;
           height: auto;
 
           img {
@@ -79,20 +66,50 @@ body {
             width: 100%;
           }
         }
+
+        @media screen and (min-width: 0) and (max-width: 1000px) {
+          &__content {
+            width: 100vw;
+            height: auto;
+          }
+
+          &__media {
+            width: 100vw;
+            height: auto;
+
+            img {
+              height: auto;
+              width: 100%;
+            }
+          }
+        }
       }
-    }
 
-    .wp-block-cover {
-      min-height: 100vh;
+      .header-section {
+        position: relative;
 
-      div {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-flow: row wrap;
+        img {
+          min-height: 100vh;
+          width: 100vw;
+          object-fit: cover;
+        }
 
-        p {
-          width: 60%;
+        .overlay-title {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+
+          p {
+            color: #fff;
+            font-size: 30px;
+            font-style: italic;
+            margin-bottom: 50px;
+          }
+
+          .quote-author {
+            font-size: 24px;
+          }
         }
       }
     }
