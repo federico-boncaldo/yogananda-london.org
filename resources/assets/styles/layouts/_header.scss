@@ -34,8 +34,11 @@
     width: 100%;
 
     .nav-primary {
-      a {
-        color: #fff;
+      .menu-item {
+        a {
+          color: #fff;
+          text-shadow: 2px 2px 4px #000;
+        }
       }
     }
   }
