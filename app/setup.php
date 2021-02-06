@@ -98,10 +98,6 @@ add_action('widgets_init', function () {
         'name'          => __('Footer third column', 'sage'),
         'id'            => 'sidebar-footer-3'
     ] + $config);
-    register_sidebar([
-        'name'          => __('Footer fourth column', 'sage'),
-        'id'            => 'sidebar-footer-4'
-    ] + $config);
 });
 
 /**
