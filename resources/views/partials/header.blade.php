@@ -11,6 +11,6 @@
     @if (has_nav_menu('primary_navigation'))
       {!! wp_nav_menu(['theme_location' => 'primary_navigation', 'menu_class' => 'nav']) !!}
     @endif
-    <button class="btn-orange donate-button"><a href="#">Donate</a></button>
+    <button class="btn-blue donate-button"><a href="https://www.srf-london.org.uk/self-realisation-fellowship-img/Donations_to_the_London_Centre_SRF-Dec-2018.pdf" target="_blank">Donate</a></button>
   </nav>
 </header>
