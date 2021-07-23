@@ -206,6 +206,10 @@
         @media screen and (min-width: 1001px) {
           .overlay-title {
             bottom: 15%;
+
+            p {
+              font-size: 30px;
+            }
           }
         }
       }
