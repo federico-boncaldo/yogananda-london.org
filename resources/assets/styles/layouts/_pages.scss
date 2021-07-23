@@ -39,7 +39,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        height: 100vh;
+        min-height: 70vh;
 
         .wp-block-group__inner-container {
           width: 50vw;
@@ -65,7 +65,7 @@
       }
 
       .wp-block-media-text {
-        min-height: 80vh;
+        min-height: 70vh;
         display: flex;
         align-items: center;
         flex-flow: wrap;
@@ -76,10 +76,10 @@
           padding: 20px;
           padding-left: 20vw;
           width: 66vw;
-          // max-height: 100%;
           min-height: 20vw;
           background-color: #f2eee5;
           transform: translate(-8vw, 8vw);
+          margin-bottom: 8vw;
 
           p {
             padding: 10px;
