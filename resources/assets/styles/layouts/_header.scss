@@ -21,6 +21,11 @@
       text-decoration: none;
       font-size: 18px;
       padding: 0 20px;
+
+      &.social-button {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
     }
   }
 }
@@ -39,6 +44,12 @@
           color: #fff;
           text-shadow: 2px 2px 4px #000;
         }
+      }
+    }
+
+    @media screen and (min-width: 0) and (max-width: 1000px) {
+      a.brand {
+        display: none;
       }
     }
   }

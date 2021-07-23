@@ -8,8 +8,8 @@
       "./scripts/customizer.js"
     ]
   },
-  "publicPath": "/app/themes/srf-london",
-  "devUrl": "https://london-srf-center.lndo.site",
+  "publicPath": "/wp-content/themes/sage",
+  "devUrl": "http://localhost/MAMP/yogananda-london.org",
   "proxyUrl": "http://localhost:3000",
   "cacheBusting": "[name]_[hash:8]",
   "watch": [
