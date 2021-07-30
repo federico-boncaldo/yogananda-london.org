@@ -14,8 +14,11 @@ footer {
 
   .container {
     width: 70vw;
-    padding-top: 3rem !important;
     border-top: 1px solid #dbdbdb;
+
+    @media screen and (min-width: 1001px) {
+      padding-top: 3rem !important;
+    }
 
     @media screen and (min-width: 0) and (max-width: 1000px) {
       width: calc(100vw - 40px);
