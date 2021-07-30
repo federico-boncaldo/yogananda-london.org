@@ -4,6 +4,8 @@ footer {
   color: #4c4c4c;
   display: flex;
   justify-content: center;
+  padding-top: 3rem;
+  padding-bottom: 3rem;
 
   @media screen and (min-width: 0) and (max-width: 1000px) {
     justify-content: left;
@@ -12,7 +14,12 @@ footer {
 
   .container {
     width: 70vw;
+    padding-top: 3rem !important;
     border-top: 1px solid #dbdbdb;
+
+    @media screen and (min-width: 0) and (max-width: 1000px) {
+      width: calc(100vw - 40px);
+    }
 
     h3 {
       color: #065c6f;
