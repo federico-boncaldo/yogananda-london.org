@@ -9,119 +9,121 @@
     padding: 0;
     margin: 0 auto;
 
-    p {
-      font-size: 1em;
-      line-height: 1.4em;
-      text-decoration: none;
-      font-weight: 200;
-      margin: 0 0 1em 0;
-    }
-
-    @media screen and (min-width: 0) and (max-width: 600px) {
-      img {
-        width: 100%;
-      }
-    }
-
-    blockquote {
-      box-sizing: border-box;
-      font-size: 1em;
-      line-height: 1.4em;
-      text-decoration: none;
-      font-weight: 400;
-      font-style: italic;
-      margin: 0 0 2em 0;
-      padding: 1em 1em 0.5em 1em;
-      background: rgb(213, 213, 245);
-      background: radial-gradient(circle, rgba(213, 213, 245, 1) 0%, rgba(239, 239, 246, 1) 62%);
-      border-top: 5px solid #bb8c36;
-      border-bottom: 5px solid #bb8c36;
-      border-left: none;
-    }
-
-    form {
-      display: flex;
-      flex-flow: wrap;
-      margin-top: 2em;
-
-      .leftcolumn,
-      .rightcolumn {
-        width: 50%;
-        overflow: hidden;
-        box-sizing: border-box;
-      }
-
-      .leftcolumn {
-        padding: 0 1em 0 0;
-      }
-
-      .rightcolumn {
-        padding: 0 0 0 1em;
-      }
-
-      @media screen and (min-width: 0) and (max-width: 1000px) {
-        .leftcolumn,
-        .rightcolumn {
-          width: 100%;
-          padding: 0;
-        }
-      }
-
+    main {
       p {
         font-size: 1em;
         line-height: 1.4em;
         text-decoration: none;
+        font-weight: 200;
+        margin: 0 0 1em 0;
+
+        @media screen and (min-width: 0) and (max-width: 600px) {
+          img {
+            width: 100%;
+          }
+        }
+      }
+
+      blockquote {
+        box-sizing: border-box;
+        font-size: 1em;
+        line-height: 1.4em;
+        text-decoration: none;
         font-weight: 400;
-        margin: 0 0 1em 0;
+        font-style: italic;
+        margin: 0 0 2em 0;
+        padding: 1em 1em 0.5em 1em;
+        background: rgb(213, 213, 245);
+        background: radial-gradient(circle, rgba(213, 213, 245, 1) 0%, rgba(239, 239, 246, 1) 62%);
+        border-top: 5px solid #bb8c36;
+        border-bottom: 5px solid #bb8c36;
+        border-left: none;
       }
 
-      input.textfield {
-        width: 100%;
-        box-sizing: border-box;
-        background-color: #efeff6;
-        padding: 0.25em 1em;
-        border: 1px solid #ccc;
-        font-size: 1em;
-        line-height: 1.4em;
-        margin: 0 0 1em 0;
-      }
+      form {
+        display: flex;
+        flex-flow: wrap;
+        margin-top: 2em;
 
-      .checkfield {
-        width: 100%;
-        font-size: 1em;
-        line-height: 1em;
-        margin: 0 0 1em 0;
-        min-height: 1.4em;
-        overflow: hidden;
-        display: block;
-      }
+        .leftcolumn,
+        .rightcolumn {
+          width: 50%;
+          overflow: hidden;
+          box-sizing: border-box;
+        }
 
-      input[type="checkbox" i] {
-        box-sizing: border-box;
-        margin: 3px 3px 3px 4px;
-      }
+        .leftcolumn {
+          padding: 0 1em 0 0;
+        }
 
-      .textarea {
-        width: 100%;
-        box-sizing: border-box;
-        background-color: #efeff6;
-        padding: 0.25em 1em;
-        border: 1px solid #ccc;
-        font-size: 1em;
-        line-height: 1.4em;
-        margin: 0 0 1em 0;
-        max-height: 7em;
-      }
+        .rightcolumn {
+          padding: 0 0 0 1em;
+        }
 
-      select.select {
-        width: 100%;
-        box-sizing: border-box;
-        background-color: #efeff6;
-        padding: 0.25em 1em;
-        border: 1px solid #ccc;
-        font-size: 1em;
-        line-height: 1.4em;
-        margin: 0 0 1em 0;
+        @media screen and (min-width: 0) and (max-width: 1000px) {
+          .leftcolumn,
+          .rightcolumn {
+            width: 100%;
+            padding: 0;
+          }
+        }
+
+        p {
+          font-size: 1em;
+          line-height: 1.4em;
+          text-decoration: none;
+          font-weight: 400;
+          margin: 0 0 1em 0;
+        }
+
+        input.textfield {
+          width: 100%;
+          box-sizing: border-box;
+          background-color: #efeff6;
+          padding: 0.25em 1em;
+          border: 1px solid #ccc;
+          font-size: 1em;
+          line-height: 1.4em;
+          margin: 0 0 1em 0;
+        }
+
+        .checkfield {
+          width: 100%;
+          font-size: 1em;
+          line-height: 1em;
+          margin: 0 0 1em 0;
+          min-height: 1.4em;
+          overflow: hidden;
+          display: block;
+        }
+
+        input[type="checkbox" i] {
+          box-sizing: border-box;
+          margin: 3px 3px 3px 4px;
+        }
+
+        .textarea {
+          width: 100%;
+          box-sizing: border-box;
+          background-color: #efeff6;
+          padding: 0.25em 1em;
+          border: 1px solid #ccc;
+          font-size: 1em;
+          line-height: 1.4em;
+          margin: 0 0 1em 0;
+          max-height: 7em;
+        }
+
+        select.select {
+          width: 100%;
+          box-sizing: border-box;
+          background-color: #efeff6;
+          padding: 0.25em 1em;
+          border: 1px solid #ccc;
+          font-size: 1em;
+          line-height: 1.4em;
+          margin: 0 0 1em 0;
+        }
       }
     }
   }
