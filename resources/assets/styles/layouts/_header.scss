@@ -36,6 +36,30 @@
   }
 }
 
+.content-page {
+  .banner {
+    background-color: #226089;
+  }
+
+  @media screen and (min-width: 0) and (max-width: 1000px) {
+    .banner {
+      display: none;
+    }
+  }
+
+  .nav-primary {
+    .menu-item {
+      a {
+        color: #fff;
+      }
+    }
+  }
+
+  .btn-blue.donate-button {
+    border: 1px solid white;
+  }
+}
+
 .navigation-page {
   .banner {
     display: flex;
