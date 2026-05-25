@@ -14,8 +14,8 @@
           <p class="quote-author">{{ get_post(get_post_thumbnail_id())->post_content }}</p>
         </div>
       </div>
-      
+
       @include('partials.content-page')
     @endwhile
   @endsection
-<div>
+</div>

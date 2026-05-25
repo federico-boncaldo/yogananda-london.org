@@ -15,5 +15,5 @@
       @include('partials.content-page')
     @endwhile
   @endsection
-<div>
+</div>
 

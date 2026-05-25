@@ -9,10 +9,10 @@
       {!! wp_nav_menu(['theme_location' => 'primary_navigation', 'menu_class' => 'nav']) !!}
     @endif
 
-    <a href="https://www.facebook.com/SRFLondon" target="_blank" class="social-button">
+    <a href="https://www.facebook.com/YoganandaLondon" target="_blank" rel="noopener noreferrer" class="social-button">
       <img src="https://www.yoganandalondon.org/self-realisation-fellowship-img/facebook-icon.png" height="31" width="31">
     </a>
-    <a href="https://www.instagram.com/srf_london_centre" target="_blank" class="social-button">
+    <a href="https://www.instagram.com/yoganandalondon" target="_blank" rel="noopener noreferrer" class="social-button">
       <img src="https://www.yoganandalondon.org/self-realisation-fellowship-img/instagram-icon.png" height="31" width="31">
     </a>
 
