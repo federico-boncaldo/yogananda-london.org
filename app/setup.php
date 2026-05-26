@@ -2,18 +2,64 @@
 
 namespace App;
 
-use Roots\Sage\Container;
-use Roots\Sage\Assets\JsonManifest;
-use Roots\Sage\Template\Blade;
-use Roots\Sage\Template\BladeProvider;
+use Illuminate\Support\Facades\Vite;
 
 /**
- * Theme assets
+ * Inject styles into the block editor.
+ */
+add_filter('block_editor_settings_all', function ($settings) {
+    $style = Vite::asset('resources/assets/styles/editor.scss');
+
+    $settings['styles'][] = [
+        'css' => "@import url('{$style}')",
+    ];
+
+    return $settings;
+});
+
+/**
+ * Inject scripts into the block editor.
+ */
+add_action('admin_head', function () {
+    if (! get_current_screen()?->is_block_editor()) {
+        return;
+    }
+
+    if (! Vite::isRunningHot()) {
+        $dependencies = json_decode(Vite::content('editor.deps.json'));
+
+        foreach ($dependencies as $dependency) {
+            if (! wp_script_is($dependency)) {
+                wp_enqueue_script($dependency);
+            }
+        }
+    }
+
+    echo Vite::withEntryPoints([
+        'resources/assets/scripts/editor.js',
+    ])->toHtml();
+});
+
+/**
+ * Use the generated theme.json file.
+ */
+add_filter('theme_file_path', function ($path, $file) {
+    return $file === 'theme.json'
+        ? public_path('build/assets/theme.json')
+        : $path;
+}, 10, 2);
+
+/**
+ * Disable on-demand block asset loading.
+ *
+ * @link https://core.trac.wordpress.org/ticket/61965
+ */
+add_filter('should_load_separate_core_block_assets', '__return_false');
+
+/**
+ * Threaded comments support.
  */
 add_action('wp_enqueue_scripts', function () {
-    wp_enqueue_style('sage/main.css', asset_path('styles/main.css'), false, null);
-    wp_enqueue_script('sage/main.js', asset_path('scripts/main.js'), ['jquery'], null, true);
-
     if (is_single() && comments_open() && get_option('thread_comments')) {
         wp_enqueue_script('comment-reply');
     }
@@ -25,6 +71,7 @@ add_action('wp_enqueue_scripts', function () {
 add_action('after_setup_theme', function () {
     /**
      * Enable features from Soil when plugin is activated
+     *
      * @link https://roots.io/plugins/soil/
      */
     add_theme_support('soil-clean-up');
@@ -35,41 +82,62 @@ add_action('after_setup_theme', function () {
 
     /**
      * Enable plugins to manage the document title
+     *
      * @link https://developer.wordpress.org/reference/functions/add_theme_support/#title-tag
      */
     add_theme_support('title-tag');
 
     /**
      * Register navigation menus
+     *
      * @link https://developer.wordpress.org/reference/functions/register_nav_menus/
      */
     register_nav_menus([
-        'primary_navigation' => __('Primary Navigation', 'sage')
+        'primary_navigation' => __('Primary Navigation', 'sage'),
     ]);
 
     /**
+     * Disable the default block patterns.
+     *
+     * @link https://developer.wordpress.org/block-editor/developers/themes/theme-support/#disabling-the-default-block-patterns
+     */
+    remove_theme_support('core-block-patterns');
+
+    /**
      * Enable post thumbnails
+     *
      * @link https://developer.wordpress.org/themes/functionality/featured-images-post-thumbnails/
      */
     add_theme_support('post-thumbnails');
 
     /**
+     * Enable responsive embed support.
+     *
+     * @link https://developer.wordpress.org/block-editor/how-to-guides/themes/theme-support/#responsive-embedded-content
+     */
+    add_theme_support('responsive-embeds');
+
+    /**
      * Enable HTML5 markup support
+     *
      * @link https://developer.wordpress.org/reference/functions/add_theme_support/#html5
      */
-    add_theme_support('html5', ['caption', 'comment-form', 'comment-list', 'gallery', 'search-form']);
+    add_theme_support('html5', [
+        'caption',
+        'comment-form',
+        'comment-list',
+        'gallery',
+        'search-form',
+        'script',
+        'style',
+    ]);
 
     /**
      * Enable selective refresh for widgets in customizer
+     *
      * @link https://developer.wordpress.org/themes/advanced-topics/customizer-api/#theme-support-in-sidebars
      */
     add_theme_support('customize-selective-refresh-widgets');
-
-    /**
-     * Use main stylesheet for visual editor
-     * @see resources/assets/styles/layouts/_tinymce.scss
-     */
-    add_editor_style(asset_path('styles/main.css'));
 }, 20);
 
 /**
@@ -78,63 +146,24 @@ add_action('after_setup_theme', function () {
 add_action('widgets_init', function () {
     $config = [
         'before_widget' => '<section class="widget %1$s %2$s">',
-        'after_widget'  => '</section>',
-        'before_title'  => '<h3>',
-        'after_title'   => '</h3>'
+        'after_widget' => '</section>',
+        'before_title' => '<h3>',
+        'after_title' => '</h3>',
     ];
     register_sidebar([
-        'name'          => __('Primary', 'sage'),
-        'id'            => 'sidebar-primary'
+        'name' => __('Primary', 'sage'),
+        'id' => 'sidebar-primary',
     ] + $config);
     register_sidebar([
-        'name'          => __('Footer first column', 'sage'),
-        'id'            => 'sidebar-footer-1'
+        'name' => __('Footer first column', 'sage'),
+        'id' => 'sidebar-footer-1',
     ] + $config);
     register_sidebar([
-        'name'          => __('Footer second column', 'sage'),
-        'id'            => 'sidebar-footer-2'
+        'name' => __('Footer second column', 'sage'),
+        'id' => 'sidebar-footer-2',
     ] + $config);
     register_sidebar([
-        'name'          => __('Footer third column', 'sage'),
-        'id'            => 'sidebar-footer-3'
+        'name' => __('Footer third column', 'sage'),
+        'id' => 'sidebar-footer-3',
     ] + $config);
-});
-
-/**
- * Updates the `$post` variable on each iteration of the loop.
- * Note: updated value is only available for subsequently loaded views, such as partials
- */
-add_action('the_post', function ($post) {
-    sage('blade')->share('post', $post);
-});
-
-/**
- * Setup Sage options
- */
-add_action('after_setup_theme', function () {
-    /**
-     * Add JsonManifest to Sage container
-     */
-    sage()->singleton('sage.assets', function () {
-        return new JsonManifest(config('assets.manifest'), config('assets.uri'));
-    });
-
-    /**
-     * Add Blade to Sage container
-     */
-    sage()->singleton('sage.blade', function (Container $app) {
-        $cachePath = config('view.compiled');
-        if (!file_exists($cachePath)) {
-            wp_mkdir_p($cachePath);
-        }
-        (new BladeProvider($app))->register();
-        return new Blade($app['view']);
-    });
-
-    /**
-     * Create @asset() Blade directive
-     */
-    sage('blade')->compiler()->directive('asset', function ($asset) {
-        return "<?= " . __NAMESPACE__ . "\\asset_path({$asset}); ?>";
-    });
 });

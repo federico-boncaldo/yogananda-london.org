@@ -2,13 +2,11 @@
 
 namespace App\Controllers;
 
-use Sober\Controller\Controller;
-
-class App extends Controller
+class App
 {
     public function siteName()
     {
-        return get_bloginfo('name');
+        return get_bloginfo('name', 'display');
     }
 
     public static function title()
@@ -17,6 +15,7 @@ class App extends Controller
             if ($home = get_option('page_for_posts', true)) {
                 return get_the_title($home);
             }
+
             return __('Latest Posts', 'sage');
         }
         if (is_archive()) {
@@ -28,6 +27,7 @@ class App extends Controller
         if (is_404()) {
             return __('Not Found', 'sage');
         }
+
         return get_the_title();
     }
 }

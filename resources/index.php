@@ -1,3 +1,3 @@
 <?php
 
-// this file is deliberately blank
+require dirname(__DIR__).'/index.php';
