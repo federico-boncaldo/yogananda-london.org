@@ -217,6 +217,15 @@
             width: auto;
           }
         }
+
+        &.is-image-fill-element > .wp-block-media-text__media img {
+          height: 100%;
+          width: auto;
+          max-width: 100%;
+          max-height: 100%;
+          object-fit: cover;
+          position: static;
+        }
       }
 
       .wp-block-media-text.has-media-on-the-right {
