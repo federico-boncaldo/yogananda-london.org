@@ -140,12 +140,14 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        flex-direction: column;
 
         @media screen and (min-width: 1001px) {
           min-height: 70vh;
         }
 
-        .wp-block-group__inner-container {
+        .wp-block-group__inner-container,
+        > :not(.wp-block-group__inner-container) {
           width: 50vw;
 
           iframe {
@@ -155,7 +157,8 @@
         }
 
         @media screen and (min-width: 0) and (max-width: 1000px) {
-          .wp-block-group__inner-container {
+          .wp-block-group__inner-container,
+          > :not(.wp-block-group__inner-container) {
             width: 100%;
 
             p {
