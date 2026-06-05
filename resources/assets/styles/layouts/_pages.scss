@@ -161,6 +161,7 @@
           > :not(.wp-block-group__inner-container) {
             width: 100%;
 
+            &:where(p),
             p {
               padding: 10px;
             }
