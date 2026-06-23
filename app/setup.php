@@ -35,6 +35,7 @@ add_action('admin_head', function () {
         }
     }
 
+    // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Vite renders the required script tags.
     echo Vite::withEntryPoints([
         'resources/assets/scripts/editor.js',
     ])->toHtml();

@@ -8,7 +8,7 @@ namespace App;
 add_filter('body_class', function (array $classes) {
     /** Add page slug if it doesn't exist */
     if (is_single() || is_page() && ! is_front_page()) {
-        if (! in_array(basename(get_permalink()), $classes)) {
+        if (! in_array(basename(get_permalink()), $classes, true)) {
             $classes[] = basename(get_permalink());
         }
     }
@@ -46,8 +46,8 @@ add_filter('wp_nav_menu_items', function ($items, $args) {
 
     if (
         str_contains($items, 'menu-item-donate')
-        || str_contains($items, 'href="' . esc_url($donationUrl) . '"')
-        || str_contains($items, 'href="' . esc_url($donationPath) . '"')
+        || str_contains($items, 'href="'.esc_url($donationUrl).'"')
+        || str_contains($items, 'href="'.esc_url($donationPath).'"')
     ) {
         return $items;
     }
@@ -58,7 +58,7 @@ add_filter('wp_nav_menu_items', function ($items, $args) {
         $classes[] = 'current-menu-item';
     }
 
-    return $items . sprintf(
+    return $items.sprintf(
         '<li class="%s"><a class="donate-menu-link" href="%s">%s</a></li>',
         esc_attr(implode(' ', $classes)),
         esc_url($donationUrl),
