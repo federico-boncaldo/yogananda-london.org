@@ -57,5 +57,36 @@ test('comments keep the WordPress comments_template flow', () => {
   assert.ok(existsSync('comments.php'));
   assert.match(read('comments.php'), /partials\.comments/);
   assert.match(read('resources/views/partials/content-single.blade.php'), /comments_template\(\)/);
-  assert.doesNotMatch(read('resources/views/partials/content-single.blade.php'), /partials\/comments\.blade\.php/);
+  assert.doesNotMatch(
+    read('resources/views/partials/content-single.blade.php'),
+    /partials\/comments\.blade\.php/,
+  );
+});
+
+test('QA harness includes static analysis and staged-file hooks', () => {
+  const composer = readJson('composer.json');
+  const pkg = readJson('package.json');
+
+  assert.equal(pkg.scripts['qa:static'], 'node scripts/qa/static-check.mjs');
+  assert.equal(pkg.scripts['qa:audit'], 'node scripts/qa/security-audit.mjs');
+  assert.equal(pkg.scripts.lint, 'npm run lint:js && npm run lint:styles');
+  assert.equal(pkg.scripts['lint:js'], 'eslint .');
+  assert.equal(pkg.scripts['lint:styles'], 'stylelint "resources/assets/styles/**/*.scss"');
+  assert.equal(
+    pkg.scripts.format,
+    'prettier --check eslint.config.js "scripts/qa/**/*.mjs" "tests/**/*.mjs" "docs/**/*.md" package.json .prettierrc.json .stylelintrc.json',
+  );
+  assert.equal(pkg.scripts.prepare, 'husky');
+  assert.equal(
+    composer.scripts['qa:php'],
+    'phpstan analyse --debug --memory-limit=512M && phpcs && vendor/bin/pint --test',
+  );
+  assert.ok('phpstan/phpstan' in composer['require-dev']);
+  assert.ok('wp-coding-standards/wpcs' in composer['require-dev']);
+  assert.ok(existsSync('phpstan.neon.dist'));
+  assert.ok(existsSync('eslint.config.js'));
+  assert.ok(existsSync('.stylelintrc.json'));
+  assert.ok(existsSync('.prettierrc.json'));
+  assert.ok(existsSync('.husky/pre-commit'));
+  assert.ok(existsSync('.husky/pre-push'));
 });

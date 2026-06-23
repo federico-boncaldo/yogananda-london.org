@@ -1,0 +1,21 @@
+includes:
+  - vendor/szepeviktor/phpstan-wordpress/extension.neon
+
+parameters:
+  level: 4
+  paths:
+    - app
+    - functions.php
+    - index.php
+  excludePaths:
+    analyse:
+      - vendor
+      - node_modules
+      - public
+      - resources/views
+  bootstrapFiles:
+    - vendor/roots/acorn/src/Illuminate/Foundation/helpers.php
+  treatPhpDocTypesAsCertain: false
+  reportUnmatchedIgnoredErrors: false
+  parallel:
+    maximumNumberOfProcesses: 1
