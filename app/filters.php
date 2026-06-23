@@ -42,8 +42,13 @@ add_filter('wp_nav_menu_items', function ($items, $args) {
     }
 
     $donationUrl = home_url('/donate/');
+    $donationPath = wp_parse_url($donationUrl, PHP_URL_PATH) ?: '/donate/';
 
-    if (str_contains($items, 'href="' . esc_url($donationUrl) . '"')) {
+    if (
+        str_contains($items, 'menu-item-donate')
+        || str_contains($items, 'href="' . esc_url($donationUrl) . '"')
+        || str_contains($items, 'href="' . esc_url($donationPath) . '"')
+    ) {
         return $items;
     }
 

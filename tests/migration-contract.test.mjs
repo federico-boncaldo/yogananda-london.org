@@ -43,13 +43,20 @@ test('WordPress loads from Sage 11 root theme files', () => {
 
 test('custom UI markers remain in templates and styles', () => {
   const header = read('resources/views/partials/header.blade.php');
+  const filters = read('app/filters.php');
+  const donationTemplate = read('resources/views/template-donation-demo.blade.php');
   const styles = read('resources/assets/styles/main.scss');
 
   assert.match(header, /London_Centre_Logo_white\.png/);
   assert.match(header, /YoganandaLondon/);
   assert.match(header, /instagram\.com\/yoganandalondon/);
-  assert.match(header, /Donate/);
+  assert.match(filters, /menu-item-donate/);
+  assert.match(filters, /home_url\('\/donate\/'\)/);
+  assert.match(filters, /Donate/);
+  assert.match(donationTemplate, /Gift Aid/);
+  assert.match(donationTemplate, /Donations_to_the_London_Centre_SRF-Dec-2018\.pdf/);
   assert.match(styles, /layouts\/header/);
+  assert.match(styles, /layouts\/donation/);
   assert.match(styles, /layouts\/pages/);
 });
 
