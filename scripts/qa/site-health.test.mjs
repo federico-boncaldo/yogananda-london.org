@@ -70,7 +70,8 @@ test('primary navigation exposes highlighted Donate link', async () => {
   assert.match(html, /menu-item-donate/);
   assert.match(html, /href=["'][^"']*\/donate\/["']/);
   assert.match(html, />Donate</);
-  assert.equal(countMatches(html, /menu-item-donate/g), 1);
+  assert.equal(countMatches(html, /<li[^>]*class=["'][^"']*menu-item-donate/g), 2);
+  assert.match(html, /id=["']mobmenuleft["'][\s\S]*menu-item-donate/);
 });
 
 test('donation demo page keeps the Gift Aid and paper-form contract', async () => {
@@ -83,7 +84,7 @@ test('donation demo page keeps the Gift Aid and paper-form contract', async () =
   assert.match(html, /Download the existing donation form/);
   assert.match(html, /Donations_to_the_London_Centre_SRF-Dec-2018\.pdf/);
   assert.doesNotMatch(html, /donate-button/);
-  assert.equal(countMatches(html, /menu-item-donate/g), 1);
+  assert.equal(countMatches(html, /<li[^>]*class=["'][^"']*menu-item-donate/g), 2);
 });
 
 function normaliseBaseUrl(value) {

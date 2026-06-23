@@ -50,8 +50,15 @@ add_filter('excerpt_more', function () {
  */
 add_filter('wp_nav_menu_items', function (string $items, object $args): string {
     $themeLocation = $args->theme_location ?? '';
+    $itemsWrap = $args->items_wrap ?? '';
+    $isMobileMenu = is_string($itemsWrap) && str_contains($itemsWrap, 'wp-mobile-menu');
 
-    if ($themeLocation !== 'primary_navigation') {
+    if (
+        $themeLocation !== 'primary_navigation'
+        && $themeLocation !== 'left-wp-mobile-menu'
+        && $themeLocation !== 'right-wp-mobile-menu'
+        && ! $isMobileMenu
+    ) {
         return $items;
     }
 
@@ -77,7 +84,7 @@ add_filter('wp_nav_menu_items', function (string $items, object $args): string {
     }
 
     return $items.sprintf(
-        '<li class="%s"><a class="donate-menu-link" href="%s">%s</a></li>',
+        '<li class="%s" role="none"><a class="donate-menu-link" href="%s" role="menuitem">%s</a></li>',
         esc_attr(implode(' ', $classes)),
         esc_url($donationUrl),
         esc_html__('Donate', 'sage')
