@@ -27,7 +27,10 @@ class Post extends Composer
         }
 
         if (is_home()) {
-            if ($home = get_option('page_for_posts', true)) {
+            $home = get_option('page_for_posts');
+            $home = is_numeric($home) ? (int) $home : 0;
+
+            if ($home > 0) {
                 return get_the_title($home);
             }
 

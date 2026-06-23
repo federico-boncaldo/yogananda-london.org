@@ -2,7 +2,7 @@ includes:
   - vendor/szepeviktor/phpstan-wordpress/extension.neon
 
 parameters:
-  level: 4
+  level: max
   paths:
     - app
     - functions.php
@@ -18,4 +18,4 @@ parameters:
   treatPhpDocTypesAsCertain: false
   reportUnmatchedIgnoredErrors: false
   parallel:
-    maximumNumberOfProcesses: 1
+    maximumNumberOfProcesses: 8

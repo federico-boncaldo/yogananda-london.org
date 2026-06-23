@@ -23,9 +23,5 @@ function asset_path(string $asset): string
  */
 function display_sidebar(): bool
 {
-    static $display;
-
-    isset($display) || $display = apply_filters('sage/display_sidebar', false);
-
-    return $display;
+    return (bool) apply_filters('sage/display_sidebar', false);
 }

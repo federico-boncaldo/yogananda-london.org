@@ -8,8 +8,14 @@ namespace App;
 add_filter('body_class', function (array $classes) {
     /** Add page slug if it doesn't exist */
     if (is_single() || is_page() && ! is_front_page()) {
-        if (! in_array(basename(get_permalink()), $classes, true)) {
-            $classes[] = basename(get_permalink());
+        $permalink = get_permalink();
+
+        if (is_string($permalink)) {
+            $slug = basename($permalink);
+
+            if (! in_array($slug, $classes, true)) {
+                $classes[] = $slug;
+            }
         }
     }
 
@@ -19,8 +25,14 @@ add_filter('body_class', function (array $classes) {
     }
 
     /** Clean up class names for custom templates */
-    $classes = array_map(function ($class) {
-        return preg_replace(['/-blade(-php)?$/', '/^page-template-views/'], '', $class);
+    $classes = array_map(function (mixed $class): string {
+        if (! is_string($class)) {
+            return '';
+        }
+
+        $class = preg_replace(['/-blade(-php)?$/', '/^page-template-views/'], '', $class);
+
+        return is_string($class) ? $class : '';
     }, $classes);
 
     return array_filter($classes);
@@ -36,13 +48,19 @@ add_filter('excerpt_more', function () {
 /**
  * Add Donate as a highlighted primary navigation item.
  */
-add_filter('wp_nav_menu_items', function ($items, $args) {
-    if (($args->theme_location ?? '') !== 'primary_navigation') {
+add_filter('wp_nav_menu_items', function (string $items, object $args): string {
+    $themeLocation = $args->theme_location ?? '';
+
+    if ($themeLocation !== 'primary_navigation') {
         return $items;
     }
 
     $donationUrl = home_url('/donate/');
-    $donationPath = wp_parse_url($donationUrl, PHP_URL_PATH) ?: '/donate/';
+    $donationPath = wp_parse_url($donationUrl, PHP_URL_PATH);
+
+    if (! is_string($donationPath) || $donationPath === '') {
+        $donationPath = '/donate/';
+    }
 
     if (
         str_contains($items, 'menu-item-donate')

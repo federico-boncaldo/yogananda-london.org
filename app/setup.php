@@ -7,12 +7,18 @@ use Illuminate\Support\Facades\Vite;
 /**
  * Inject styles into the block editor.
  */
-add_filter('block_editor_settings_all', function ($settings) {
+add_filter('block_editor_settings_all', function (array $settings): array {
     $style = Vite::asset('resources/assets/styles/editor.scss');
+    $styles = $settings['styles'] ?? [];
 
-    $settings['styles'][] = [
+    if (! is_array($styles)) {
+        $styles = [];
+    }
+
+    $styles[] = [
         'css' => "@import url('{$style}')",
     ];
+    $settings['styles'] = $styles;
 
     return $settings;
 });
@@ -26,9 +32,17 @@ add_action('admin_head', function () {
     }
 
     if (! Vite::isRunningHot()) {
-        $dependencies = json_decode(Vite::content('editor.deps.json'));
+        $dependencies = json_decode(Vite::content('editor.deps.json'), true);
+
+        if (! is_array($dependencies)) {
+            return;
+        }
 
         foreach ($dependencies as $dependency) {
+            if (! is_string($dependency)) {
+                continue;
+            }
+
             if (! wp_script_is($dependency)) {
                 wp_enqueue_script($dependency);
             }

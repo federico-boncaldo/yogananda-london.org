@@ -88,6 +88,8 @@ test('QA harness includes static analysis and staged-file hooks', () => {
     composer.scripts['qa:php'],
     'phpstan analyse --debug --memory-limit=512M && phpcs && vendor/bin/pint --test',
   );
+  assert.match(read('phpstan.neon.dist'), /level:\s+max/);
+  assert.match(read('phpstan.neon.dist'), /maximumNumberOfProcesses:\s+8/);
   assert.ok('phpstan/phpstan' in composer['require-dev']);
   assert.ok('wp-coding-standards/wpcs' in composer['require-dev']);
   assert.ok(existsSync('phpstan.neon.dist'));
