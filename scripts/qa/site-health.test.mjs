@@ -74,7 +74,7 @@ test('primary navigation exposes highlighted Donate link', async () => {
   assert.match(html, /id=["']mobmenuleft["'][\s\S]*menu-item-donate/);
 });
 
-test('donation demo page keeps the Gift Aid and paper-form contract', async () => {
+test('donation page keeps the Gift Aid and paper-form contract', async () => {
   const { html } = await fetchHtml('/donate/');
 
   assert.match(html, /Make a Donation/);
@@ -84,6 +84,7 @@ test('donation demo page keeps the Gift Aid and paper-form contract', async () =
   assert.match(html, /Download the existing donation form/);
   assert.match(html, /Donations_to_the_London_Centre_SRF-Dec-2018\.pdf/);
   assert.doesNotMatch(html, /donate-button/);
+  assert.doesNotMatch(html, /donation-demo/i);
   assert.equal(countMatches(html, /<li[^>]*class=["'][^"']*menu-item-donate/g), 2);
 });
 

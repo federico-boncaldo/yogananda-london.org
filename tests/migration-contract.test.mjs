@@ -44,7 +44,7 @@ test('WordPress loads from Sage 11 root theme files', () => {
 test('custom UI markers remain in templates and styles', () => {
   const header = read('resources/views/partials/header.blade.php');
   const filters = read('app/filters.php');
-  const donationTemplate = read('resources/views/template-donation-demo.blade.php');
+  const donationTemplate = read('resources/views/template-donation.blade.php');
   const styles = read('resources/assets/styles/main.scss');
 
   assert.match(header, /London_Centre_Logo_white\.png/);
@@ -55,9 +55,14 @@ test('custom UI markers remain in templates and styles', () => {
   assert.match(filters, /Donate/);
   assert.match(donationTemplate, /Gift Aid/);
   assert.match(donationTemplate, /Donations_to_the_London_Centre_SRF-Dec-2018\.pdf/);
+  assert.doesNotMatch(donationTemplate, /demo/i);
   assert.match(styles, /layouts\/header/);
   assert.match(styles, /layouts\/donation/);
   assert.match(styles, /layouts\/pages/);
+  assert.ok(
+    styles.indexOf('@import "layouts/pages";') < styles.indexOf('@import "layouts/donation";'),
+    'Donation styles must load after generic page styles.',
+  );
 });
 
 test('comments keep the WordPress comments_template flow', () => {

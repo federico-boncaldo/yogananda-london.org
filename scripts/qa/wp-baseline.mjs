@@ -41,9 +41,9 @@ try {
       failures.push('Expected a published /donate/ page, but none was found.');
     }
 
-    if (report.donatePage.template !== 'template-donation-demo.blade.php') {
+    if (report.donatePage.template !== 'template-donation.blade.php') {
       failures.push(
-        `Expected /donate/ template-donation-demo.blade.php, found ${report.donatePage.template || 'none'}.`,
+        `Expected /donate/ template-donation.blade.php, found ${report.donatePage.template || 'none'}.`,
       );
     }
   }

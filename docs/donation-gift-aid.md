@@ -1,14 +1,14 @@
-# Donation and Gift Aid Demo
+# Donation and Gift Aid
 
 ## Goal
 
-Create a responsive theme mockup for a one-off donation journey with an optional Gift Aid declaration. The mockup is for local review before wiring the page to CiviCRM contribution, Gift Aid, and payment processing.
+Create a responsive theme page for a one-off donation journey with an optional Gift Aid declaration. The page is for local review before wiring the page to CiviCRM contribution, Gift Aid, and payment processing.
 
 ## Scope
 
 - Replace the existing hardcoded Donate button with a highlighted Donate item in the primary navigation.
 - Point the Donate navigation item to `/donate/`.
-- Add a dedicated `Donation Demo Template` page template.
+- Add a dedicated `Donation Template` page template.
 - Keep the existing donation PDF available from the new page.
 - Use British English for page copy and labels.
 - Match the current site style: serif typography, calm blue headings, soft off-white panels, and restrained buttons.
