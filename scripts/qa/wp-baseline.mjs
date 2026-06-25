@@ -5,7 +5,8 @@ import { join } from 'node:path';
 const artifactDir = process.env.QA_ARTIFACT_DIR || '/tmp/yogananda-qa';
 const skipPlugins = process.env.QA_SKIP_PLUGINS ?? 'sugar-calendar-lite';
 const expectedTheme = process.env.QA_EXPECT_THEME || 'yoganandalondon.org';
-const expectDonate = process.env.QA_EXPECT_DONATE !== '0';
+const expectDonate = process.env.QA_EXPECT_DONATE === '1';
+const expectPopup = process.env.QA_EXPECT_POPUP === '1';
 const expectCivi = process.env.QA_EXPECT_CIVICRM === '1';
 const wpBaseArgs = skipPlugins ? [`--skip-plugins=${skipPlugins}`] : [];
 
@@ -28,6 +29,7 @@ try {
     wp(['plugin', 'list', '--fields=name,status,version,update', '--format=json']),
   );
   report.donatePage = getDonatePage();
+  report.monasticVisitPopup = getMonasticVisitPopup();
   report.civicrm = getCiviCrmVersion();
 
   if (report.activeTheme?.name !== expectedTheme) {
@@ -51,11 +53,42 @@ try {
   if (expectCivi && !report.civicrm.available) {
     failures.push('Expected CiviCRM WP-CLI to be available, but the version command failed.');
   }
+
+  if (expectPopup && !report.monasticVisitPopup.enabled) {
+    failures.push('Expected the monastic visit popup to be enabled.');
+  }
 } finally {
   mkdirSync(artifactDir, { recursive: true });
   const reportPath = join(artifactDir, `wp-baseline-${stamp()}.json`);
   writeFileSync(reportPath, `${JSON.stringify(report, null, 2)}\n`);
   printSummary(report, reportPath, failures);
+}
+
+function getMonasticVisitPopup() {
+  const rawValue = wp(['option', 'get', 'yogananda_monastic_visit_popup', '--format=json'], {
+    allowFailure: true,
+  });
+
+  if (!rawValue) {
+    return {
+      enabled: false,
+      title: null,
+    };
+  }
+
+  try {
+    const value = JSON.parse(rawValue);
+
+    return {
+      enabled: value.enabled === '1' || value.enabled === 1 || value.enabled === true,
+      title: value.title || null,
+    };
+  } catch {
+    return {
+      enabled: false,
+      title: null,
+    };
+  }
 }
 
 if (failures.length > 0) {
@@ -90,8 +123,10 @@ function getCiviCrmVersion() {
   };
 }
 
-function wp(args) {
-  return run(['ddev', 'wp', ...wpBaseArgs, ...args]).stdout.trim();
+function wp(args, options = {}) {
+  const result = run(['ddev', 'wp', ...wpBaseArgs, ...args], options);
+
+  return result.status === 0 ? result.stdout.trim() : '';
 }
 
 function run(command, options = {}) {
@@ -137,6 +172,9 @@ function printSummary(value, reportPath, issues) {
   console.log(`- Active plugins: ${activePlugins.length}`);
   console.log(
     `- Donate page: ${value.donatePage?.id || 'missing'} (${value.donatePage?.template || 'no template'})`,
+  );
+  console.log(
+    `- Monastic visit popup: ${value.monasticVisitPopup?.enabled ? 'enabled' : 'disabled'}`,
   );
   console.log(
     `- CiviCRM: ${value.civicrm?.available ? value.civicrm.output.replace(/\n/g, ' | ') : 'not available'}`,

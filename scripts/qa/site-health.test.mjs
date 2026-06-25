@@ -20,7 +20,6 @@ const defaultPaths = [
   '/retreats/',
   '/connect/',
   '/contact-us/suggestion-box/',
-  '/donate/',
 ];
 
 if (process.env.QA_INCLUDE_CIVICRM === '1') {
@@ -64,26 +63,18 @@ test('homepage matches the London Centre site identity', async () => {
   assert.doesNotMatch(html, /DebtRegister|Debt Register/i);
 });
 
-test('primary navigation exposes highlighted Donate link', async () => {
+test('monastic visit popup exposes accessible modal markup when enabled', async () => {
+  if (process.env.QA_EXPECT_POPUP !== '1') {
+    return;
+  }
+
   const { html } = await fetchHtml('/');
 
-  assert.match(html, /menu-item-donate/);
-  assert.match(html, /href=["'][^"']*\/donate\/["']/);
-  assert.match(html, />Donate</);
-  assert.equal(countMatches(html, /menu-item-donate/g), 1);
-});
-
-test('donation demo page keeps the Gift Aid and paper-form contract', async () => {
-  const { html } = await fetchHtml('/donate/');
-
-  assert.match(html, /Make a Donation/);
-  assert.match(html, /Gift Aid/);
-  assert.match(html, /UK taxpayer/);
-  assert.match(html, /Continue to secure donation/);
-  assert.match(html, /Download the existing donation form/);
-  assert.match(html, /Donations_to_the_London_Centre_SRF-Dec-2018\.pdf/);
-  assert.doesNotMatch(html, /donate-button/);
-  assert.equal(countMatches(html, /menu-item-donate/g), 1);
+  assert.match(html, /data-monastic-visit-popup/);
+  assert.match(html, /role=["']dialog["']/);
+  assert.match(html, /aria-modal=["']true["']/);
+  assert.match(html, /aria-labelledby=["']monastic-visit-popup-title["']/);
+  assert.match(html, /aria-label=["']Close monastic visit notice["']/);
 });
 
 function normaliseBaseUrl(value) {
@@ -114,10 +105,6 @@ function assertHealthyHtml(html, path) {
   for (const pattern of forbiddenPatterns) {
     assert.doesNotMatch(html, pattern, `${path} matched ${pattern}`);
   }
-}
-
-function countMatches(value, pattern) {
-  return [...value.matchAll(pattern)].length;
 }
 
 function getBasicAuthHeader() {

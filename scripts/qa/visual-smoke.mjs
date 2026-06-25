@@ -8,7 +8,7 @@ const baseUrl = normaliseBaseUrl(
   process.env.QA_BASE_URL || 'https://yoganandalondon-local.ddev.site',
 );
 const basicAuthHeader = getBasicAuthHeader();
-const paths = (process.env.QA_VISUAL_PATHS || '/,/donate/,/attend-a-meditation/,/about-us/')
+const paths = (process.env.QA_VISUAL_PATHS || '/,/attend-a-meditation/,/about-us/')
   .split(',')
   .map((path) => path.trim())
   .filter(Boolean);
@@ -60,17 +60,12 @@ try {
       const bodyText = await page.locator('body').innerText();
       assertHealthyText(bodyText, url);
 
-      if (path === '/') {
-        await expectVisible(page, '.menu-item-donate', 'Donate menu item');
-      }
-
-      if (path === '/donate/') {
-        await expectVisible(page, 'text=Gift Aid', 'Gift Aid section');
-        await expectVisible(page, 'text=Continue to secure donation', 'donation action button');
+      if (path === '/' && process.env.QA_EXPECT_POPUP === '1') {
+        await expectVisible(page, '[data-monastic-visit-popup]', 'monastic visit popup');
         await expectVisible(
           page,
-          'text=Download the existing donation form',
-          'existing donation form link',
+          '[aria-label="Close monastic visit notice"]',
+          'monastic visit popup close button',
         );
       }
 

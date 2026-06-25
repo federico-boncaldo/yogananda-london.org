@@ -90,3 +90,15 @@ test('QA harness includes static analysis and staged-file hooks', () => {
   assert.ok(existsSync('.husky/pre-commit'));
   assert.ok(existsSync('.husky/pre-push'));
 });
+
+test('QA harness defaults stay independent from the donation flow', () => {
+  const siteHealth = read('scripts/qa/site-health.test.mjs');
+  const wpBaseline = read('scripts/qa/wp-baseline.mjs');
+  const visualSmoke = read('scripts/qa/visual-smoke.mjs');
+
+  assert.doesNotMatch(siteHealth, /'\/donate\/'/);
+  assert.doesNotMatch(siteHealth, /donation demo page/i);
+  assert.match(wpBaseline, /QA_EXPECT_DONATE === '1'/);
+  assert.doesNotMatch(visualSmoke, /Gift Aid/);
+  assert.doesNotMatch(visualSmoke, /\/donate\//);
+});
