@@ -8,6 +8,7 @@ const baseUrl = normaliseBaseUrl(
   process.env.QA_BASE_URL || 'https://yoganandalondon-local.ddev.site',
 );
 const basicAuthHeader = getBasicAuthHeader();
+const waitUntil = process.env.QA_VISUAL_WAIT_UNTIL || 'domcontentloaded';
 const paths = (process.env.QA_VISUAL_PATHS || '/,/attend-a-meditation/,/about-us/')
   .split(',')
   .map((path) => path.trim())
@@ -51,7 +52,7 @@ try {
     for (const path of paths) {
       const url = new URL(path, `${baseUrl}/`).toString();
       const response = await page.goto(url, {
-        waitUntil: 'networkidle',
+        waitUntil,
         timeout: Number(process.env.QA_TIMEOUT_MS || 30000),
       });
 

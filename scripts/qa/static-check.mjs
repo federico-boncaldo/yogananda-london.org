@@ -7,7 +7,7 @@ const checks = [];
 runPhpSyntaxChecks();
 runIfAvailable('vendor/bin/pint', ['--test'], 'Laravel Pint');
 runIfAvailable('vendor/bin/phpcs', [], 'PHP_CodeSniffer');
-runIfAvailable('vendor/bin/phpstan', ['analyse', '--debug', '--memory-limit=512M'], 'PHPStan');
+runIfAvailable('vendor/bin/phpstan', ['analyse', '--debug', '--memory-limit=1G'], 'PHPStan');
 
 const failed = checks.filter((check) => check.status === 'failed');
 

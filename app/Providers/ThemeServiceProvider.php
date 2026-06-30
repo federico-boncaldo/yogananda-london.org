@@ -14,7 +14,7 @@ class ThemeServiceProvider extends SageServiceProvider
     {
         parent::boot();
 
-        Blade::directive('asset', function ($asset) {
+        Blade::directive('asset', function (string $asset): string {
             return "<?php echo esc_url(\\App\\asset_path({$asset})); ?>";
         });
     }

@@ -8,8 +8,11 @@ namespace App;
 add_filter('body_class', function (array $classes) {
     /** Add page slug if it doesn't exist */
     if (is_single() || is_page() && ! is_front_page()) {
-        if (! in_array(basename(get_permalink()), $classes)) {
-            $classes[] = basename(get_permalink());
+        $permalink = get_permalink();
+        $slug = is_string($permalink) ? basename($permalink) : '';
+
+        if ($slug !== '' && ! in_array($slug, $classes, true)) {
+            $classes[] = $slug;
         }
     }
 
@@ -19,8 +22,9 @@ add_filter('body_class', function (array $classes) {
     }
 
     /** Clean up class names for custom templates */
-    $classes = array_map(function ($class) {
-        return preg_replace(['/-blade(-php)?$/', '/^page-template-views/'], '', $class);
+    $classes = array_filter($classes, 'is_string');
+    $classes = array_map(function (string $class): string {
+        return preg_replace(['/-blade(-php)?$/', '/^page-template-views/'], '', $class) ?? $class;
     }, $classes);
 
     return array_filter($classes);

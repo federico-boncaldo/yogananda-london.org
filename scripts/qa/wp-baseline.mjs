@@ -164,28 +164,50 @@ function printSummary(value, reportPath, issues) {
   const activePlugins = (value.plugins || []).filter((plugin) => plugin.status === 'active');
 
   console.log('WordPress QA baseline');
-  console.log(`- WordPress: ${value.wordpressVersion || 'unknown'}`);
-  console.log(`- PHP: ${value.phpVersion || 'unknown'}`);
-  console.log(
-    `- Active theme: ${value.activeTheme?.name || 'unknown'} ${value.activeTheme?.version || ''}`.trim(),
-  );
+  console.log(`- WordPress: ${fallback(value.wordpressVersion)}`);
+  console.log(`- PHP: ${fallback(value.phpVersion)}`);
+  console.log(`- Active theme: ${formatTheme(value.activeTheme)}`);
   console.log(`- Active plugins: ${activePlugins.length}`);
-  console.log(
-    `- Donate page: ${value.donatePage?.id || 'missing'} (${value.donatePage?.template || 'no template'})`,
-  );
-  console.log(
-    `- Monastic visit popup: ${value.monasticVisitPopup?.enabled ? 'enabled' : 'disabled'}`,
-  );
-  console.log(
-    `- CiviCRM: ${value.civicrm?.available ? value.civicrm.output.replace(/\n/g, ' | ') : 'not available'}`,
-  );
+  console.log(`- Donate page: ${formatDonatePage(value.donatePage)}`);
+  console.log(`- Monastic visit popup: ${formatPopup(value.monasticVisitPopup)}`);
+  console.log(`- CiviCRM: ${formatCiviCrm(value.civicrm)}`);
   console.log(`- Report: ${reportPath}`);
 
-  if (issues.length > 0) {
-    console.error('\nFailures');
-    for (const issue of issues) {
-      console.error(`- ${issue}`);
-    }
+  printFailures(issues);
+}
+
+function fallback(value, defaultValue = 'unknown') {
+  return value || defaultValue;
+}
+
+function formatTheme(theme) {
+  return `${fallback(theme?.name)} ${theme?.version || ''}`.trim();
+}
+
+function formatDonatePage(donatePage) {
+  return `${donatePage?.id || 'missing'} (${donatePage?.template || 'no template'})`;
+}
+
+function formatPopup(popup) {
+  return popup?.enabled ? 'enabled' : 'disabled';
+}
+
+function formatCiviCrm(civicrm) {
+  if (!civicrm?.available) {
+    return 'not available';
+  }
+
+  return civicrm.output.replace(/\n/g, ' | ');
+}
+
+function printFailures(issues) {
+  if (issues.length === 0) {
+    return;
+  }
+
+  console.error('\nFailures');
+  for (const issue of issues) {
+    console.error(`- ${issue}`);
   }
 }
 

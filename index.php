@@ -1,3 +1,9 @@
 <?php
 
-echo view(app('sage.view'), app('sage.data'))->render();
+use Illuminate\Contracts\View\View;
+
+$view = view(app('sage.view'), app('sage.data'));
+
+if ($view instanceof View) {
+    echo $view->render();
+}
