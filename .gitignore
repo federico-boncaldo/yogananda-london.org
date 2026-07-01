@@ -4,6 +4,7 @@
 /dist
 /node_modules
 /test-results
+docs/private/
 npm-debug.log
 yarn-error.log
 /vendor
