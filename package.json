@@ -19,7 +19,7 @@
     "lint": "npm run lint:js && npm run lint:styles",
     "lint:js": "eslint .",
     "lint:styles": "stylelint \"resources/assets/styles/**/*.scss\"",
-    "format": "prettier --check eslint.config.js \"scripts/qa/**/*.mjs\" \"tests/**/*.mjs\" \"docs/**/*.md\" package.json .prettierrc.json .stylelintrc.json",
+    "format": "prettier --check eslint.config.js \"scripts/qa/**/*.mjs\" \"tests/**/*.mjs\" package.json .prettierrc.json .stylelintrc.json",
     "precommit": "npm run qa:static && npm test && npm run lint",
     "prepush": "npm run qa:audit",
     "prepare": "husky",

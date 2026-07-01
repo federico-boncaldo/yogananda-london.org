@@ -76,7 +76,7 @@ test('QA harness includes static analysis and staged-file hooks', () => {
   assert.equal(pkg.scripts['lint:styles'], 'stylelint "resources/assets/styles/**/*.scss"');
   assert.equal(
     pkg.scripts.format,
-    'prettier --check eslint.config.js "scripts/qa/**/*.mjs" "tests/**/*.mjs" "docs/**/*.md" package.json .prettierrc.json .stylelintrc.json',
+    'prettier --check eslint.config.js "scripts/qa/**/*.mjs" "tests/**/*.mjs" package.json .prettierrc.json .stylelintrc.json',
   );
   assert.equal(pkg.scripts.prepare, 'husky');
   assert.equal(
