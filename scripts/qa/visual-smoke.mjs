@@ -68,6 +68,14 @@ try {
           '[aria-label="Close monastic visit notice"]',
           'monastic visit popup close button',
         );
+
+        if (process.env.QA_EXPECT_POPUP_IMAGE === '1') {
+          await expectVisible(
+            page,
+            '.monastic-visit-popup__image img',
+            'monastic visit popup image',
+          );
+        }
       }
 
       const screenshot = join(artifactDir, `${safeName(path)}-${viewport.name}.png`);

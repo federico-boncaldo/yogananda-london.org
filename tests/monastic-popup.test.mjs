@@ -24,6 +24,83 @@ test('popup dismissal uses a content-versioned local storage key', async () => {
   assert.equal(shouldOpenPopup({ version: 'visit-2027', storage }), true);
 });
 
+test('popup can be dismissed once per day or browser session', async () => {
+  assert.ok(existsSync(modulePath), 'monastic popup script should exist');
+
+  const { rememberPopupDismissal, shouldOpenPopup, storageKeyFor } = await import(moduleUrl);
+  const localStorage = createStorage();
+  const sessionStorage = createStorage();
+  const morning = new Date(2026, 6, 2, 9, 30);
+  const evening = new Date(2026, 6, 2, 19, 0);
+  const tomorrow = new Date(2026, 6, 3, 9, 30);
+
+  assert.equal(
+    storageKeyFor('visit-2026', { frequency: 'daily', now: morning }),
+    'yogananda:monastic-visit-popup:visit-2026:daily:2026-07-02',
+  );
+  assert.equal(
+    shouldOpenPopup({
+      version: 'visit-2026',
+      frequency: 'daily',
+      storage: localStorage,
+      now: morning,
+    }),
+    true,
+  );
+
+  rememberPopupDismissal({
+    version: 'visit-2026',
+    frequency: 'daily',
+    storage: localStorage,
+    now: morning,
+  });
+
+  assert.equal(
+    shouldOpenPopup({
+      version: 'visit-2026',
+      frequency: 'daily',
+      storage: localStorage,
+      now: evening,
+    }),
+    false,
+  );
+  assert.equal(
+    shouldOpenPopup({
+      version: 'visit-2026',
+      frequency: 'daily',
+      storage: localStorage,
+      now: tomorrow,
+    }),
+    true,
+  );
+
+  rememberPopupDismissal({
+    version: 'visit-2026',
+    frequency: 'session',
+    storage: sessionStorage,
+    now: morning,
+  });
+
+  assert.equal(
+    shouldOpenPopup({
+      version: 'visit-2026',
+      frequency: 'session',
+      storage: sessionStorage,
+      now: evening,
+    }),
+    false,
+  );
+  assert.equal(
+    shouldOpenPopup({
+      version: 'visit-2026',
+      frequency: 'session',
+      storage: createStorage(),
+      now: evening,
+    }),
+    true,
+  );
+});
+
 test('popup opens if browser storage is unavailable', async () => {
   assert.ok(existsSync(modulePath), 'monastic popup script should exist');
 

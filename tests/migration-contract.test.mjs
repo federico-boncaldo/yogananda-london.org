@@ -127,19 +127,39 @@ test('monastic visit popup is wired through WordPress settings and theme assets'
 
   const popupPhp = read('app/monastic-popup.php');
   const partial = read('resources/views/partials/monastic-visit-popup.blade.php');
+  const popupJs = read('resources/assets/scripts/components/monastic-popup.js');
   const commonJs = read('resources/assets/scripts/routes/common.js');
   const mainScss = read('resources/assets/styles/main.scss');
+  const popupScss = read('resources/assets/styles/components/_monastic-popup.scss');
+  const viteConfig = read('vite.config.js');
 
   assert.match(popupPhp, /yogananda_monastic_visit_popup/);
   assert.match(popupPhp, /add_theme_page/);
   assert.match(popupPhp, /register_setting/);
   assert.match(popupPhp, /wp_kses_post/);
   assert.match(popupPhp, /wp_footer/);
+  assert.match(popupPhp, /image_id/);
+  assert.match(popupPhp, /display_frequency/);
+  assert.match(popupPhp, /wp_enqueue_media/);
+  assert.match(popupPhp, /wp_get_attachment_image/);
+  assert.match(popupPhp, /monastic_visit_popup_frequency_options/);
+  assert.match(popupPhp, /monastic_visit_popup_admin_image_preview/);
   assert.match(partial, /data-monastic-visit-popup/);
+  assert.match(partial, /data-popup-frequency/);
   assert.match(partial, /role="dialog"/);
   assert.match(partial, /aria-modal="true"/);
   assert.match(partial, /aria-labelledby="monastic-visit-popup-title"/);
   assert.match(partial, /Close monastic visit notice/);
+  assert.match(partial, /monastic-visit-popup__image/);
+  assert.match(popupJs, /frequency/);
+  assert.match(popupJs, /sessionStorage/);
   assert.match(commonJs, /initMonasticVisitPopup/);
   assert.match(mainScss, /components\/monastic-popup/);
+  assert.match(popupScss, /&__image/);
+  assert.match(
+    popupScss,
+    /@media screen and \(max-width: 600px\)[\s\S]*\.monastic-visit-popup\s*\{[\s\S]*align-items:\s*center;/,
+  );
+  assert.match(viteConfig, /resources\/assets\/scripts\/admin\/monastic-popup-admin\.js/);
+  assert.ok(existsSync('resources/assets/scripts/admin/monastic-popup-admin.js'));
 });

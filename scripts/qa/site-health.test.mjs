@@ -75,6 +75,12 @@ test('monastic visit popup exposes accessible modal markup when enabled', async 
   assert.match(html, /aria-modal=["']true["']/);
   assert.match(html, /aria-labelledby=["']monastic-visit-popup-title["']/);
   assert.match(html, /aria-label=["']Close monastic visit notice["']/);
+  assert.match(html, /data-popup-frequency=["'](?:daily|content_update|session)["']/);
+
+  if (process.env.QA_EXPECT_POPUP_IMAGE === '1') {
+    assert.match(html, /monastic-visit-popup__image/);
+    assert.match(html, /monastic-visit-popup__image-element/);
+  }
 });
 
 function normaliseBaseUrl(value) {

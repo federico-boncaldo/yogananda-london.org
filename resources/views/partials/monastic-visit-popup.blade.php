@@ -3,6 +3,7 @@
   class="monastic-visit-popup"
   data-monastic-visit-popup
   data-popup-version="{{ esc_attr($version) }}"
+  data-popup-frequency="{{ esc_attr($display_frequency) }}"
   aria-hidden="true"
   hidden
 >
@@ -23,6 +24,12 @@
     >
       <span aria-hidden="true">&times;</span>
     </button>
+
+    @if (! empty($image_html))
+      <div class="monastic-visit-popup__image">
+        {!! $image_html !!}
+      </div>
+    @endif
 
     <p class="monastic-visit-popup__eyebrow">{{ __('Upcoming visit', 'sage') }}</p>
     <h2 id="monastic-visit-popup-title" class="monastic-visit-popup__title">{{ $title }}</h2>
