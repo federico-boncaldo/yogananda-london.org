@@ -139,6 +139,7 @@ test('monastic visit popup is wired through WordPress settings and theme assets'
   assert.match(popupPhp, /wp_kses_post/);
   assert.match(popupPhp, /wp_footer/);
   assert.match(popupPhp, /image_id/);
+  assert.match(popupPhp, /eyebrow/);
   assert.match(popupPhp, /display_frequency/);
   assert.match(popupPhp, /wp_enqueue_media/);
   assert.match(popupPhp, /wp_get_attachment_image/);
@@ -151,6 +152,8 @@ test('monastic visit popup is wired through WordPress settings and theme assets'
   assert.match(partial, /aria-labelledby="monastic-visit-popup-title"/);
   assert.match(partial, /Close monastic visit notice/);
   assert.match(partial, /monastic-visit-popup__image/);
+  assert.match(partial, /\$eyebrow/);
+  assert.doesNotMatch(partial, /Upcoming visit/);
   assert.match(popupJs, /frequency/);
   assert.match(popupJs, /sessionStorage/);
   assert.match(commonJs, /initMonasticVisitPopup/);

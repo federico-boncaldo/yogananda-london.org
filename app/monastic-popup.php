@@ -58,7 +58,7 @@ add_action('admin_enqueue_scripts', function (string $hook_suffix): void {
 add_action('wp_footer', __NAMESPACE__.'\\render_monastic_visit_popup');
 
 /**
- * @return array{enabled: string, display_frequency: string, image_id: int, title: string, body: string, button_label: string, button_url: string}
+ * @return array{enabled: string, display_frequency: string, image_id: int, eyebrow: string, title: string, body: string, button_label: string, button_url: string}
  */
 function monastic_visit_popup_defaults(): array
 {
@@ -66,6 +66,7 @@ function monastic_visit_popup_defaults(): array
         'enabled' => '0',
         'display_frequency' => MONASTIC_VISIT_POPUP_FREQUENCY_DAILY,
         'image_id' => 0,
+        'eyebrow' => '',
         'title' => '',
         'body' => '',
         'button_label' => '',
@@ -74,7 +75,7 @@ function monastic_visit_popup_defaults(): array
 }
 
 /**
- * @return array{enabled: string, display_frequency: string, image_id: int, title: string, body: string, button_label: string, button_url: string}
+ * @return array{enabled: string, display_frequency: string, image_id: int, eyebrow: string, title: string, body: string, button_label: string, button_url: string}
  */
 function monastic_visit_popup_settings(): array
 {
@@ -91,7 +92,7 @@ function monastic_visit_popup_settings(): array
 
 /**
  * @param  mixed  $input
- * @return array{enabled: string, display_frequency: string, image_id: int, title: string, body: string, button_label: string, button_url: string}
+ * @return array{enabled: string, display_frequency: string, image_id: int, eyebrow: string, title: string, body: string, button_label: string, button_url: string}
  */
 function monastic_visit_popup_sanitize($input): array
 {
@@ -103,6 +104,7 @@ function monastic_visit_popup_sanitize($input): array
         'enabled' => empty($input['enabled']) ? '0' : '1',
         'display_frequency' => monastic_visit_popup_frequency_value($input),
         'image_id' => monastic_visit_popup_integer_value($input, 'image_id'),
+        'eyebrow' => sanitize_text_field(monastic_visit_popup_string_value($input, 'eyebrow')),
         'title' => sanitize_text_field(monastic_visit_popup_string_value($input, 'title')),
         'body' => wp_kses_post(monastic_visit_popup_string_value($input, 'body')),
         'button_label' => sanitize_text_field(
@@ -171,7 +173,7 @@ function monastic_visit_popup_frequency_value(array $input): string
 }
 
 /**
- * @param  array{enabled: string, display_frequency: string, image_id: int, title: string, body: string, button_label: string, button_url: string}  $settings
+ * @param  array{enabled: string, display_frequency: string, image_id: int, eyebrow: string, title: string, body: string, button_label: string, button_url: string}  $settings
  */
 function monastic_visit_popup_is_enabled(array $settings): bool
 {
@@ -181,7 +183,7 @@ function monastic_visit_popup_is_enabled(array $settings): bool
 }
 
 /**
- * @param  array{enabled: string, display_frequency: string, image_id: int, title: string, body: string, button_label: string, button_url: string}  $settings
+ * @param  array{enabled: string, display_frequency: string, image_id: int, eyebrow: string, title: string, body: string, button_label: string, button_url: string}  $settings
  */
 function monastic_visit_popup_version(array $settings): string
 {
@@ -189,6 +191,7 @@ function monastic_visit_popup_version(array $settings): string
         'title' => $settings['title'],
         'body' => $settings['body'],
         'image_id' => $settings['image_id'],
+        'eyebrow' => $settings['eyebrow'],
         'display_frequency' => $settings['display_frequency'],
         'button_label' => $settings['button_label'],
         'button_url' => $settings['button_url'],
@@ -198,12 +201,13 @@ function monastic_visit_popup_version(array $settings): string
 }
 
 /**
- * @param  array{enabled: string, display_frequency: string, image_id: int, title: string, body: string, button_label: string, button_url: string}  $settings
- * @return array{title: string, body: string, image_html: string, display_frequency: string, button_label: string, button_url: string, version: string}
+ * @param  array{enabled: string, display_frequency: string, image_id: int, eyebrow: string, title: string, body: string, button_label: string, button_url: string}  $settings
+ * @return array{eyebrow: string, title: string, body: string, image_html: string, display_frequency: string, button_label: string, button_url: string, version: string}
  */
 function monastic_visit_popup_view_data(array $settings): array
 {
     return [
+        'eyebrow' => $settings['eyebrow'],
         'title' => $settings['title'],
         'body' => $settings['body'],
         'image_html' => monastic_visit_popup_image_html($settings['image_id']),
@@ -323,6 +327,21 @@ function render_monastic_visit_popup_admin_page(): void
                                 <?php } ?>
                             </select>
                             <p class="description"><?php echo esc_html__('Once per day is recommended for short-term announcements.', 'sage'); ?></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">
+                            <label for="monastic-visit-popup-eyebrow"><?php echo esc_html__('Intro label', 'sage'); ?></label>
+                        </th>
+                        <td>
+                            <input
+                                id="monastic-visit-popup-eyebrow"
+                                class="regular-text"
+                                type="text"
+                                name="<?php echo esc_attr(MONASTIC_VISIT_POPUP_OPTION); ?>[eyebrow]"
+                                value="<?php echo esc_attr($settings['eyebrow']); ?>"
+                            >
+                            <p class="description"><?php echo esc_html__('Optional. Appears above the popup title.', 'sage'); ?></p>
                         </td>
                     </tr>
                     <tr>

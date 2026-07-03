@@ -31,7 +31,9 @@
       </div>
     @endif
 
-    <p class="monastic-visit-popup__eyebrow">{{ __('Upcoming visit', 'sage') }}</p>
+    @if (! empty($eyebrow))
+      <p class="monastic-visit-popup__eyebrow">{{ $eyebrow }}</p>
+    @endif
     <h2 id="monastic-visit-popup-title" class="monastic-visit-popup__title">{{ $title }}</h2>
     <div class="monastic-visit-popup__content">
       {!! $body !!}
