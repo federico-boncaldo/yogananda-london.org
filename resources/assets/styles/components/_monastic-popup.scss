@@ -145,6 +145,20 @@ body.monastic-visit-popup-open {
   }
 }
 
+@media screen and (min-width: 1024px) {
+  .monastic-visit-popup {
+    &__dialog {
+      width: min(720px, 100%);
+    }
+
+    &__image {
+      img {
+        max-height: 320px;
+      }
+    }
+  }
+}
+
 @media screen and (max-width: 600px) {
   .monastic-visit-popup {
     align-items: center;

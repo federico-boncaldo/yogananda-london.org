@@ -160,6 +160,14 @@ test('monastic visit popup is wired through WordPress settings and theme assets'
   assert.doesNotMatch(popupScss, /object-fit:\s*cover;/);
   assert.match(
     popupScss,
+    /@media screen and \(min-width: 1024px\)[\s\S]*&__dialog\s*\{[\s\S]*width:\s*min\(720px,\s*100%\);/,
+  );
+  assert.match(
+    popupScss,
+    /@media screen and \(min-width: 1024px\)[\s\S]*&__image\s*\{[\s\S]*img\s*\{[\s\S]*max-height:\s*320px;/,
+  );
+  assert.match(
+    popupScss,
     /@media screen and \(max-width: 600px\)[\s\S]*\.monastic-visit-popup\s*\{[\s\S]*align-items:\s*center;/,
   );
   assert.match(viteConfig, /resources\/assets\/scripts\/admin\/monastic-popup-admin\.js/);
