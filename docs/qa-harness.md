@@ -52,6 +52,12 @@ That command runs `qa:audit`, so known dependency advisories are caught before p
 
 Screenshots and JSON reports are written outside the repository by default.
 
+After installing npm dependencies, install the browser binary used by the Playwright checks:
+
+```sh
+npx playwright install chromium
+```
+
 `qa:donation:tools` checks the external tools needed for a release-grade donation/payment flow:
 
 - Stripe CLI, for webhook forwarding and sandbox event tests.
