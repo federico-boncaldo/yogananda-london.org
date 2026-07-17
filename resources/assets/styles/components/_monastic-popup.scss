@@ -122,7 +122,10 @@ body.monastic-visit-popup-open {
   &__image-viewer-panel {
     position: relative;
     width: min(1120px, 100%);
+    height: calc(100vh - 48px);
+    height: calc(100dvh - 48px);
     max-height: calc(100vh - 48px);
+    max-height: calc(100dvh - 48px);
     box-sizing: border-box;
     padding: 48px 22px 22px;
     background: #fff;
@@ -160,7 +163,11 @@ body.monastic-visit-popup-open {
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 100%;
+    height: calc(100vh - 140px);
+    height: calc(100dvh - 140px);
     max-height: calc(100vh - 140px);
+    max-height: calc(100dvh - 140px);
     overflow: auto;
     background: #f7f4ed;
     border-radius: 6px;
@@ -168,10 +175,11 @@ body.monastic-visit-popup-open {
 
   &__image-viewer-element {
     display: block;
-    width: auto;
+    width: 100%;
     max-width: 100%;
-    height: auto;
+    height: 100%;
     max-height: calc(100vh - 140px);
+    max-height: calc(100dvh - 140px);
     object-fit: contain;
   }
 
@@ -277,6 +285,8 @@ body.monastic-visit-popup-open {
     }
 
     &__image-viewer-panel {
+      height: calc(100vh - 24px);
+      height: calc(100dvh - 24px);
       max-height: calc(100vh - 24px);
       max-height: calc(100dvh - 24px);
       padding: 46px 12px 12px;
@@ -284,6 +294,8 @@ body.monastic-visit-popup-open {
 
     &__image-viewer-frame,
     &__image-viewer-element {
+      height: calc(100vh - 94px);
+      height: calc(100dvh - 94px);
       max-height: calc(100vh - 94px);
       max-height: calc(100dvh - 94px);
     }

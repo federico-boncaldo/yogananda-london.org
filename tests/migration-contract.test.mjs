@@ -176,6 +176,8 @@ test('monastic visit popup is wired through WordPress settings and theme assets'
   assert.match(popupScss, /&__image/);
   assert.match(popupScss, /&__image-trigger/);
   assert.match(popupScss, /&__image-viewer/);
+  assert.match(popupScss, /&__image-viewer-element\s*\{[\s\S]*width:\s*100%;/);
+  assert.match(popupScss, /&__image-viewer-element\s*\{[\s\S]*height:\s*100%;/);
   assert.match(popupScss, /object-fit:\s*contain;/);
   assert.doesNotMatch(popupScss, /object-fit:\s*cover;/);
   assert.match(
