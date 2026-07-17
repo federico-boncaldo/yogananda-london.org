@@ -250,7 +250,9 @@ function monastic_visit_popup_image_viewer_html(int $image_id): string
         false,
         [
             'class' => 'monastic-visit-popup__image-viewer-element',
-            'loading' => 'eager',
+            'decoding' => 'async',
+            'fetchpriority' => 'low',
+            'loading' => 'lazy',
         ]
     );
 

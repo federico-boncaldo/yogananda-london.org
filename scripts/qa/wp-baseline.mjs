@@ -5,6 +5,8 @@ import { join } from 'node:path';
 const artifactDir = process.env.QA_ARTIFACT_DIR || '/tmp/yogananda-qa';
 const skipPlugins = process.env.QA_SKIP_PLUGINS ?? 'sugar-calendar-lite';
 const expectedTheme = process.env.QA_EXPECT_THEME || 'yoganandalondon.org';
+const expectedDonateTemplate =
+  process.env.QA_EXPECT_DONATE_TEMPLATE || 'template-donation.blade.php';
 const expectDonate = process.env.QA_EXPECT_DONATE === '1';
 const expectPopup = process.env.QA_EXPECT_POPUP === '1';
 const expectCivi = process.env.QA_EXPECT_CIVICRM === '1';
@@ -43,9 +45,9 @@ try {
       failures.push('Expected a published /donate/ page, but none was found.');
     }
 
-    if (report.donatePage.template !== 'template-donation-demo.blade.php') {
+    if (report.donatePage.template !== expectedDonateTemplate) {
       failures.push(
-        `Expected /donate/ template-donation-demo.blade.php, found ${report.donatePage.template || 'none'}.`,
+        `Expected /donate/ ${expectedDonateTemplate}, found ${report.donatePage.template || 'none'}.`,
       );
     }
   }

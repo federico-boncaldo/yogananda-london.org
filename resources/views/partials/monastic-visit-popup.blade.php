@@ -50,7 +50,11 @@
     </div>
 
     @if (! empty($button_label) && ! empty($button_url))
-      <a class="monastic-visit-popup__button" href="{{ esc_url($button_url) }}">
+      <a
+        class="monastic-visit-popup__button"
+        href="{{ esc_url($button_url) }}"
+        data-monastic-visit-popup-dismiss
+      >
         {{ $button_label }}
       </a>
     @endif

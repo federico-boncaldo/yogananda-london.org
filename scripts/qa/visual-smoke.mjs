@@ -10,6 +10,7 @@ const baseUrl = normaliseBaseUrl(
 const basicAuthHeader = getBasicAuthHeader();
 const waitUntil = process.env.QA_VISUAL_WAIT_UNTIL || 'domcontentloaded';
 const ignoreHTTPSErrors = process.env.QA_IGNORE_HTTPS_ERRORS !== '0';
+const allowConsoleMessages = process.env.QA_VISUAL_ALLOW_CONSOLE === '1';
 const paths = (process.env.QA_VISUAL_PATHS || '/,/attend-a-meditation/,/about-us/')
   .split(',')
   .map((path) => path.trim())
@@ -98,6 +99,15 @@ try {
 
 const reportPath = join(artifactDir, `visual-smoke-${stamp()}.json`);
 writeFileSync(reportPath, `${JSON.stringify(report, null, 2)}\n`);
+
+if (!allowConsoleMessages) {
+  const consoleFailures = report.checks.flatMap((check) =>
+    check.consoleMessages.map((message) => `${check.path} ${check.viewport.name}: ${message}`),
+  );
+
+  assert.deepEqual(consoleFailures, [], 'Visual QA found console warnings or errors');
+}
+
 console.log(`Visual QA report: ${reportPath}`);
 
 async function loadPlaywright() {

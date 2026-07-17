@@ -85,6 +85,7 @@ export function initMonasticVisitPopup(
   const documentElement = popup.ownerDocument;
   const dialog = popup.querySelector('[role="dialog"]');
   const closeControls = popup.querySelectorAll('[data-monastic-visit-popup-close]');
+  const dismissControls = popup.querySelectorAll('[data-monastic-visit-popup-dismiss]');
   const imageViewerController = createImageViewerController({ popup, dialog });
   const previouslyFocused = documentElement.activeElement;
 
@@ -97,6 +98,7 @@ export function initMonasticVisitPopup(
     popup.setAttribute('aria-hidden', 'false');
     documentElement.body.classList.add('monastic-visit-popup-open');
     closeControls.forEach((control) => control.addEventListener('click', close));
+    dismissControls.forEach((control) => control.addEventListener('click', close));
     imageViewerController.bind();
     documentElement.addEventListener('keydown', handleKeydown);
     focusFirstElement(dialog);
@@ -108,6 +110,7 @@ export function initMonasticVisitPopup(
     popup.setAttribute('aria-hidden', 'true');
     documentElement.body.classList.remove('monastic-visit-popup-open');
     closeControls.forEach((control) => control.removeEventListener('click', close));
+    dismissControls.forEach((control) => control.removeEventListener('click', close));
     documentElement.removeEventListener('keydown', handleKeydown);
     rememberPopupDismissal({ version, frequency, storage: dismissalStorage });
 

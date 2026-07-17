@@ -68,6 +68,7 @@ test('QA harness includes static analysis and staged-file hooks', () => {
   const pkg = readJson('package.json');
   const phpstan = read('phpstan.neon.dist');
   const eslint = read('eslint.config.js');
+  const staticCheck = read('scripts/qa/static-check.mjs');
 
   assert.equal(pkg.scripts['qa:static'], 'node scripts/qa/static-check.mjs');
   assert.equal(pkg.scripts['qa:audit'], 'node scripts/qa/security-audit.mjs');
@@ -98,6 +99,8 @@ test('QA harness includes static analysis and staged-file hooks', () => {
   assert.match(eslint, /sonarjs/);
   assert.match(eslint, /complexity:\s+\['error'/);
   assert.match(eslint, /'sonarjs\/cognitive-complexity'/);
+  assert.match(staticCheck, /QA_STATIC_ALLOW_MISSING_TOOLS/);
+  assert.match(staticCheck, /allowMissingTools\s+\?\s+'skipped'\s+:\s+'failed'/);
   assert.ok(existsSync('phpstan.neon.dist'));
   assert.ok(existsSync('eslint.config.js'));
   assert.ok(existsSync('.stylelintrc.json'));
@@ -116,10 +119,15 @@ test('QA harness defaults stay independent from the donation flow', () => {
   assert.doesNotMatch(siteHealth, /'\/donate\/'/);
   assert.doesNotMatch(siteHealth, /donation demo page/i);
   assert.match(wpBaseline, /QA_EXPECT_DONATE === '1'/);
+  assert.match(wpBaseline, /QA_EXPECT_DONATE_TEMPLATE/);
+  assert.match(wpBaseline, /template-donation\.blade\.php/);
+  assert.doesNotMatch(wpBaseline, /template-donation-demo/);
   assert.match(visualSmoke, /QA_VISUAL_WAIT_UNTIL/);
   assert.match(visualSmoke, /domcontentloaded/);
   assert.match(visualSmoke, /QA_IGNORE_HTTPS_ERRORS/);
   assert.match(visualSmoke, /ignoreHTTPSErrors/);
+  assert.match(visualSmoke, /QA_VISUAL_ALLOW_CONSOLE/);
+  assert.match(visualSmoke, /Visual QA found console warnings or errors/);
   assert.match(accessibilitySmoke, /AxeBuilder/);
   assert.match(accessibilitySmoke, /QA_EXPECT_POPUP/);
   assert.match(accessibilitySmoke, /data-monastic-popup-image-viewer/);
@@ -152,6 +160,8 @@ test('monastic visit popup is wired through WordPress settings and theme assets'
   assert.match(popupPhp, /display_frequency/);
   assert.match(popupPhp, /wp_enqueue_media/);
   assert.match(popupPhp, /wp_get_attachment_image/);
+  assert.match(popupPhp, /fetchpriority'\s+=>\s+'low'/);
+  assert.match(popupPhp, /loading'\s+=>\s+'lazy'/);
   assert.match(popupPhp, /monastic_visit_popup_frequency_options/);
   assert.match(popupPhp, /monastic_visit_popup_admin_image_preview/);
   assert.match(partial, /data-monastic-visit-popup/);
@@ -164,11 +174,13 @@ test('monastic visit popup is wired through WordPress settings and theme assets'
   assert.match(partial, /data-monastic-popup-image-trigger/);
   assert.match(partial, /data-monastic-popup-image-viewer/);
   assert.match(partial, /data-monastic-popup-image-close/);
+  assert.match(partial, /data-monastic-visit-popup-dismiss/);
   assert.match(partial, /aria-expanded="false"/);
   assert.match(partial, /aria-haspopup="dialog"/);
   assert.match(partial, /\$eyebrow/);
   assert.doesNotMatch(partial, /Upcoming visit/);
   assert.match(popupJs, /frequency/);
+  assert.match(popupJs, /dismissControls/);
   assert.match(popupJs, /setImageViewerExpanded/);
   assert.match(popupJs, /sessionStorage/);
   assert.match(commonJs, /initMonasticVisitPopup/);
