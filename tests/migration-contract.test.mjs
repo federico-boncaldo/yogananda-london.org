@@ -71,6 +71,7 @@ test('QA harness includes static analysis and staged-file hooks', () => {
 
   assert.equal(pkg.scripts['qa:static'], 'node scripts/qa/static-check.mjs');
   assert.equal(pkg.scripts['qa:audit'], 'node scripts/qa/security-audit.mjs');
+  assert.equal(pkg.scripts['qa:a11y'], 'node scripts/qa/accessibility-smoke.mjs');
   assert.equal(pkg.scripts.lint, 'npm run lint:js && npm run lint:styles');
   assert.equal(pkg.scripts['lint:js'], 'eslint .');
   assert.equal(pkg.scripts['lint:styles'], 'stylelint "resources/assets/styles/**/*.scss"');
@@ -84,6 +85,7 @@ test('QA harness includes static analysis and staged-file hooks', () => {
     'phpstan analyse --debug --memory-limit=1G && phpcs && vendor/bin/pint --test',
   );
   assert.ok('phpstan/phpstan' in composer['require-dev']);
+  assert.ok('@axe-core/playwright' in pkg.devDependencies);
   assert.ok('tomasvotruba/cognitive-complexity' in composer['require-dev']);
   assert.ok('wp-coding-standards/wpcs' in composer['require-dev']);
   assert.match(phpstan, /level:\s+max/);
@@ -102,18 +104,25 @@ test('QA harness includes static analysis and staged-file hooks', () => {
   assert.ok(existsSync('.prettierrc.json'));
   assert.ok(existsSync('.husky/pre-commit'));
   assert.ok(existsSync('.husky/pre-push'));
+  assert.ok(existsSync('scripts/qa/accessibility-smoke.mjs'));
 });
 
 test('QA harness defaults stay independent from the donation flow', () => {
   const siteHealth = read('scripts/qa/site-health.test.mjs');
   const wpBaseline = read('scripts/qa/wp-baseline.mjs');
   const visualSmoke = read('scripts/qa/visual-smoke.mjs');
+  const accessibilitySmoke = read('scripts/qa/accessibility-smoke.mjs');
 
   assert.doesNotMatch(siteHealth, /'\/donate\/'/);
   assert.doesNotMatch(siteHealth, /donation demo page/i);
   assert.match(wpBaseline, /QA_EXPECT_DONATE === '1'/);
   assert.match(visualSmoke, /QA_VISUAL_WAIT_UNTIL/);
   assert.match(visualSmoke, /domcontentloaded/);
+  assert.match(visualSmoke, /QA_IGNORE_HTTPS_ERRORS/);
+  assert.match(visualSmoke, /ignoreHTTPSErrors/);
+  assert.match(accessibilitySmoke, /AxeBuilder/);
+  assert.match(accessibilitySmoke, /QA_EXPECT_POPUP/);
+  assert.match(accessibilitySmoke, /data-monastic-popup-image-viewer/);
   assert.doesNotMatch(visualSmoke, /Gift Aid/);
   assert.doesNotMatch(visualSmoke, /\/donate\//);
 });
@@ -152,13 +161,21 @@ test('monastic visit popup is wired through WordPress settings and theme assets'
   assert.match(partial, /aria-labelledby="monastic-visit-popup-title"/);
   assert.match(partial, /Close monastic visit notice/);
   assert.match(partial, /monastic-visit-popup__image/);
+  assert.match(partial, /data-monastic-popup-image-trigger/);
+  assert.match(partial, /data-monastic-popup-image-viewer/);
+  assert.match(partial, /data-monastic-popup-image-close/);
+  assert.match(partial, /aria-expanded="false"/);
+  assert.match(partial, /aria-haspopup="dialog"/);
   assert.match(partial, /\$eyebrow/);
   assert.doesNotMatch(partial, /Upcoming visit/);
   assert.match(popupJs, /frequency/);
+  assert.match(popupJs, /setImageViewerExpanded/);
   assert.match(popupJs, /sessionStorage/);
   assert.match(commonJs, /initMonasticVisitPopup/);
   assert.match(mainScss, /components\/monastic-popup/);
   assert.match(popupScss, /&__image/);
+  assert.match(popupScss, /&__image-trigger/);
+  assert.match(popupScss, /&__image-viewer/);
   assert.match(popupScss, /object-fit:\s*contain;/);
   assert.doesNotMatch(popupScss, /object-fit:\s*cover;/);
   assert.match(

@@ -9,6 +9,7 @@ const baseUrl = normaliseBaseUrl(
 );
 const basicAuthHeader = getBasicAuthHeader();
 const waitUntil = process.env.QA_VISUAL_WAIT_UNTIL || 'domcontentloaded';
+const ignoreHTTPSErrors = process.env.QA_IGNORE_HTTPS_ERRORS !== '0';
 const paths = (process.env.QA_VISUAL_PATHS || '/,/attend-a-meditation/,/about-us/')
   .split(',')
   .map((path) => path.trim())
@@ -30,7 +31,7 @@ const report = {
 
 try {
   for (const viewport of viewports) {
-    const page = await browser.newPage({ viewport });
+    const page = await browser.newPage({ ignoreHTTPSErrors, viewport });
     const messages = [];
 
     if (basicAuthHeader) {

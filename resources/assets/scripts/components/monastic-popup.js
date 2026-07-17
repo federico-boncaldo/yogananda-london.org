@@ -53,6 +53,16 @@ export function rememberPopupDismissal({
   }
 }
 
+export function setImageViewerExpanded({ viewer, trigger, expanded } = {}) {
+  if (!viewer || !trigger) {
+    return;
+  }
+
+  viewer.hidden = !expanded;
+  viewer.setAttribute('aria-hidden', expanded ? 'false' : 'true');
+  trigger.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+}
+
 export function initMonasticVisitPopup(
   root = globalThis.document,
   storage = globalThis.localStorage,
@@ -75,6 +85,7 @@ export function initMonasticVisitPopup(
   const documentElement = popup.ownerDocument;
   const dialog = popup.querySelector('[role="dialog"]');
   const closeControls = popup.querySelectorAll('[data-monastic-visit-popup-close]');
+  const imageViewerController = createImageViewerController({ popup, dialog });
   const previouslyFocused = documentElement.activeElement;
 
   if (!dialog) {
@@ -86,11 +97,13 @@ export function initMonasticVisitPopup(
     popup.setAttribute('aria-hidden', 'false');
     documentElement.body.classList.add('monastic-visit-popup-open');
     closeControls.forEach((control) => control.addEventListener('click', close));
+    imageViewerController.bind();
     documentElement.addEventListener('keydown', handleKeydown);
-    getFocusableElements(dialog)[0]?.focus();
+    focusFirstElement(dialog);
   }
 
   function close() {
+    imageViewerController.unbind();
     popup.hidden = true;
     popup.setAttribute('aria-hidden', 'true');
     documentElement.body.classList.remove('monastic-visit-popup-open');
@@ -105,18 +118,75 @@ export function initMonasticVisitPopup(
 
   function handleKeydown(event) {
     if (event.key === 'Escape') {
+      if (imageViewerController.isExpanded()) {
+        imageViewerController.close();
+        return;
+      }
+
       close();
       return;
     }
 
     if (event.key === 'Tab') {
-      trapFocus(event, dialog);
+      trapFocus(event, imageViewerController.focusContainer());
     }
   }
 
   open();
 
   return { close };
+}
+
+function createImageViewerController({ popup, dialog }) {
+  const trigger = popup.querySelector('[data-monastic-popup-image-trigger]');
+  const viewer = popup.querySelector('[data-monastic-popup-image-viewer]');
+  const panel = viewer?.querySelector('[role="dialog"]');
+  const closeControls = viewer?.querySelectorAll('[data-monastic-popup-image-close]') || [];
+  let expanded = false;
+
+  function open() {
+    if (!trigger || !viewer || !panel) {
+      return;
+    }
+
+    expanded = true;
+    setImageViewerExpanded({ viewer, trigger, expanded });
+    dialog.setAttribute('aria-hidden', 'true');
+    closeControls.forEach((control) => control.addEventListener('click', close));
+    focusFirstElement(panel) || panel.focus();
+  }
+
+  function close({ restoreFocus = true } = {}) {
+    if (!expanded || !trigger || !viewer) {
+      return;
+    }
+
+    expanded = false;
+    setImageViewerExpanded({ viewer, trigger, expanded });
+    dialog.setAttribute('aria-hidden', 'false');
+    closeControls.forEach((control) => control.removeEventListener('click', close));
+
+    if (restoreFocus && typeof trigger.focus === 'function') {
+      trigger.focus();
+    }
+  }
+
+  return {
+    bind() {
+      trigger?.addEventListener('click', open);
+    },
+    close,
+    focusContainer() {
+      return expanded && panel ? panel : dialog;
+    },
+    isExpanded() {
+      return expanded;
+    },
+    unbind() {
+      close({ restoreFocus: false });
+      trigger?.removeEventListener('click', open);
+    },
+  };
 }
 
 function normaliseFrequency(frequency) {
@@ -148,16 +218,30 @@ function dateStamp(value) {
   return `${year}-${month}-${day}`;
 }
 
+function focusFirstElement(container) {
+  const firstElement = getFocusableElements(container)[0];
+
+  if (!firstElement) {
+    return false;
+  }
+
+  firstElement.focus();
+  return true;
+}
+
 function getFocusableElements(container) {
+  const activeElement = container.ownerDocument.activeElement;
+
   return [...container.querySelectorAll(focusableSelector)].filter(
     (element) =>
-      element.offsetParent !== null ||
-      element === container.ownerDocument.activeElement ||
-      element.getAttribute('aria-hidden') !== 'true',
+      element.getAttribute('aria-hidden') !== 'true' &&
+      (element.offsetParent !== null ||
+        element === activeElement ||
+        element.getClientRects().length > 0),
   );
 }
 
-function trapFocus(event, dialog) {
+export function trapFocus(event, dialog) {
   const focusableElements = getFocusableElements(dialog);
 
   if (focusableElements.length === 0) {
@@ -169,6 +253,12 @@ function trapFocus(event, dialog) {
   const firstElement = focusableElements[0];
   const lastElement = focusableElements[focusableElements.length - 1];
   const activeElement = dialog.ownerDocument.activeElement;
+
+  if (!focusableElements.includes(activeElement)) {
+    event.preventDefault();
+    (event.shiftKey ? lastElement : firstElement).focus();
+    return;
+  }
 
   if (event.shiftKey && activeElement === firstElement) {
     event.preventDefault();

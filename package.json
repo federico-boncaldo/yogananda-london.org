@@ -14,8 +14,9 @@
     "qa:theme": "npm run qa:static && npm test && npm run build",
     "qa:wp": "node scripts/qa/wp-baseline.mjs",
     "qa:site": "node --test scripts/qa/site-health.test.mjs",
+    "qa:a11y": "node scripts/qa/accessibility-smoke.mjs",
     "qa:visual": "node scripts/qa/visual-smoke.mjs",
-    "qa:local": "npm run qa:theme && npm run qa:audit && npm run qa:wp && npm run qa:site",
+    "qa:local": "npm run qa:theme && npm run qa:audit && npm run qa:wp && npm run qa:site && npm run qa:a11y",
     "lint": "npm run lint:js && npm run lint:styles",
     "lint:js": "eslint .",
     "lint:styles": "stylelint \"resources/assets/styles/**/*.scss\"",
@@ -31,6 +32,7 @@
     "translate:mo": "wp i18n make-mo ./resources/lang ./resources/lang"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.12.1",
     "@eslint/js": "^9.39.1",
     "@roots/vite-plugin": "^2.0.0",
     "@tailwindcss/vite": "^4.0.0",

@@ -202,7 +202,7 @@ function monastic_visit_popup_version(array $settings): string
 
 /**
  * @param  array{enabled: string, display_frequency: string, image_id: int, eyebrow: string, title: string, body: string, button_label: string, button_url: string}  $settings
- * @return array{eyebrow: string, title: string, body: string, image_html: string, display_frequency: string, button_label: string, button_url: string, version: string}
+ * @return array{eyebrow: string, title: string, body: string, image_html: string, image_viewer_html: string, display_frequency: string, button_label: string, button_url: string, version: string}
  */
 function monastic_visit_popup_view_data(array $settings): array
 {
@@ -211,6 +211,7 @@ function monastic_visit_popup_view_data(array $settings): array
         'title' => $settings['title'],
         'body' => $settings['body'],
         'image_html' => monastic_visit_popup_image_html($settings['image_id']),
+        'image_viewer_html' => monastic_visit_popup_image_viewer_html($settings['image_id']),
         'display_frequency' => $settings['display_frequency'],
         'button_label' => $settings['button_label'],
         'button_url' => $settings['button_url'],
@@ -230,6 +231,25 @@ function monastic_visit_popup_image_html(int $image_id): string
         false,
         [
             'class' => 'monastic-visit-popup__image-element',
+            'loading' => 'eager',
+        ]
+    );
+
+    return is_string($image) ? $image : '';
+}
+
+function monastic_visit_popup_image_viewer_html(int $image_id): string
+{
+    if ($image_id <= 0) {
+        return '';
+    }
+
+    $image = wp_get_attachment_image(
+        $image_id,
+        'full',
+        false,
+        [
+            'class' => 'monastic-visit-popup__image-viewer-element',
             'loading' => 'eager',
         ]
     );

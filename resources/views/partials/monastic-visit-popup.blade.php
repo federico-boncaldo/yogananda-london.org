@@ -20,14 +20,24 @@
       class="monastic-visit-popup__close"
       type="button"
       data-monastic-visit-popup-close
-      aria-label="Close monastic visit notice"
+      aria-label="{{ esc_attr__('Close monastic visit notice', 'sage') }}"
     >
       <span aria-hidden="true">&times;</span>
     </button>
 
     @if (! empty($image_html))
       <div class="monastic-visit-popup__image">
-        {!! $image_html !!}
+        <button
+          class="monastic-visit-popup__image-trigger"
+          type="button"
+          data-monastic-popup-image-trigger
+          aria-controls="monastic-visit-popup-image-viewer"
+          aria-expanded="false"
+          aria-haspopup="dialog"
+          aria-label="{{ esc_attr__('View popup image larger', 'sage') }}"
+        >
+          {!! $image_html !!}
+        </button>
       </div>
     @endif
 
@@ -45,4 +55,35 @@
       </a>
     @endif
   </div>
+
+  @if (! empty($image_viewer_html))
+    <div
+      id="monastic-visit-popup-image-viewer"
+      class="monastic-visit-popup__image-viewer"
+      data-monastic-popup-image-viewer
+      aria-hidden="true"
+      hidden
+    >
+      <div class="monastic-visit-popup__image-viewer-backdrop" data-monastic-popup-image-close></div>
+      <div
+        class="monastic-visit-popup__image-viewer-panel"
+        role="dialog"
+        aria-modal="true"
+        aria-label="{{ esc_attr__('Expanded popup image', 'sage') }}"
+        tabindex="-1"
+      >
+        <button
+          class="monastic-visit-popup__image-viewer-close"
+          type="button"
+          data-monastic-popup-image-close
+          aria-label="{{ esc_attr__('Close expanded popup image', 'sage') }}"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <div class="monastic-visit-popup__image-viewer-frame">
+          {!! $image_viewer_html !!}
+        </div>
+      </div>
+    </div>
+  @endif
 </div>

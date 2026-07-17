@@ -118,6 +118,49 @@ test('popup opens if browser storage is unavailable', async () => {
   assert.doesNotThrow(() => rememberPopupDismissal({ version: 'visit-2026', storage }));
 });
 
+test('expanded image viewer state stays accessible to trigger controls', async () => {
+  assert.ok(existsSync(modulePath), 'monastic popup script should exist');
+
+  const { setImageViewerExpanded } = await import(moduleUrl);
+  const viewer = createElementDouble();
+  const trigger = createElementDouble();
+
+  setImageViewerExpanded({ viewer, trigger, expanded: true });
+
+  assert.equal(viewer.hidden, false);
+  assert.equal(viewer.attributes['aria-hidden'], 'false');
+  assert.equal(trigger.attributes['aria-expanded'], 'true');
+
+  setImageViewerExpanded({ viewer, trigger, expanded: false });
+
+  assert.equal(viewer.hidden, true);
+  assert.equal(viewer.attributes['aria-hidden'], 'true');
+  assert.equal(trigger.attributes['aria-expanded'], 'false');
+});
+
+test('focus trap keeps keyboard focus inside the active dialog', async () => {
+  assert.ok(existsSync(modulePath), 'monastic popup script should exist');
+
+  const { trapFocus } = await import(moduleUrl);
+  const first = createFocusableElementDouble();
+  const last = createFocusableElementDouble();
+  const dialog = {
+    ownerDocument: {
+      activeElement: { nodeName: 'DIALOG' },
+    },
+    querySelectorAll() {
+      return [first, last];
+    },
+  };
+  const event = createKeyboardEventDouble();
+
+  trapFocus(event, dialog);
+
+  assert.equal(event.defaultPrevented, true);
+  assert.equal(first.focused, true);
+  assert.equal(last.focused, false);
+});
+
 function createStorage() {
   const values = new Map();
 
@@ -127,6 +170,39 @@ function createStorage() {
     },
     setItem(key, value) {
       values.set(key, String(value));
+    },
+  };
+}
+
+function createElementDouble() {
+  return {
+    hidden: true,
+    attributes: {},
+    setAttribute(name, value) {
+      this.attributes[name] = String(value);
+    },
+  };
+}
+
+function createFocusableElementDouble() {
+  return {
+    focused: false,
+    offsetParent: {},
+    getAttribute() {
+      return null;
+    },
+    focus() {
+      this.focused = true;
+    },
+  };
+}
+
+function createKeyboardEventDouble({ shiftKey = false } = {}) {
+  return {
+    defaultPrevented: false,
+    shiftKey,
+    preventDefault() {
+      this.defaultPrevented = true;
     },
   };
 }
