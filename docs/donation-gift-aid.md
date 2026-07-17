@@ -47,3 +47,5 @@ npm run qa:donation
 This requires the external payment/security tooling listed in `docs/qa-harness.md`: Stripe CLI, CiviCRM CLI `cv`, OSV-Scanner, Lighthouse CI, and either Gitleaks or TruffleHog.
 
 Use only Stripe sandbox/test credentials locally and on staging. Live keys must not be committed, pasted into documentation, or used before production sign-off.
+
+Track the end-to-end rollout in `docs/donation-rollout-checklist.md`.
