@@ -8,6 +8,8 @@ const baseUrl = normaliseBaseUrl(
   process.env.QA_BASE_URL || 'https://yoganandalondon-local.ddev.site',
 );
 const basicAuthHeader = getBasicAuthHeader();
+const ignoreHTTPSErrors = process.env.QA_IGNORE_HTTPS_ERRORS !== '0';
+const allowConsoleMessages = process.env.QA_VISUAL_ALLOW_CONSOLE === '1';
 const paths = (process.env.QA_VISUAL_PATHS || '/,/donate/,/attend-a-meditation/,/about-us/')
   .split(',')
   .map((path) => path.trim())
@@ -29,7 +31,7 @@ const report = {
 
 try {
   for (const viewport of viewports) {
-    const page = await browser.newPage({ viewport });
+    const page = await browser.newPage({ ignoreHTTPSErrors, viewport });
     const messages = [];
 
     if (basicAuthHeader) {
@@ -93,6 +95,15 @@ try {
 
 const reportPath = join(artifactDir, `visual-smoke-${stamp()}.json`);
 writeFileSync(reportPath, `${JSON.stringify(report, null, 2)}\n`);
+
+if (!allowConsoleMessages) {
+  const consoleFailures = report.checks.flatMap((check) =>
+    check.consoleMessages.map((message) => `${check.path} ${check.viewport.name}: ${message}`),
+  );
+
+  assert.deepEqual(consoleFailures, [], 'Visual QA found console warnings or errors');
+}
+
 console.log(`Visual QA report: ${reportPath}`);
 
 async function loadPlaywright() {

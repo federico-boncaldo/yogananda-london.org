@@ -1,0 +1,126 @@
+import assert from 'node:assert/strict';
+import { mkdirSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
+
+import { AxeBuilder } from '@axe-core/playwright';
+import { chromium } from 'playwright';
+
+const artifactDir = process.env.QA_ARTIFACT_DIR || '/tmp/yogananda-qa';
+const baseUrl = normaliseBaseUrl(
+  process.env.QA_BASE_URL || 'https://yoganandalondon-local.ddev.site',
+);
+const basicAuthHeader = getBasicAuthHeader();
+const ignoreHTTPSErrors = process.env.QA_IGNORE_HTTPS_ERRORS !== '0';
+const paths = (process.env.QA_A11Y_PATHS || '/donate/')
+  .split(',')
+  .map((path) => path.trim())
+  .filter(Boolean);
+const timeout = Number(process.env.QA_TIMEOUT_MS || 30000);
+
+const viewports = [
+  { name: 'desktop', width: 1440, height: 1000 },
+  { name: 'mobile', width: 390, height: 844 },
+];
+
+mkdirSync(artifactDir, { recursive: true });
+
+const browser = await chromium.launch();
+const report = {
+  generatedAt: new Date().toISOString(),
+  baseUrl,
+  checks: [],
+};
+
+try {
+  for (const viewport of viewports) {
+    const context = await browser.newContext({
+      ignoreHTTPSErrors,
+      viewport: { width: viewport.width, height: viewport.height },
+    });
+
+    if (basicAuthHeader) {
+      await context.setExtraHTTPHeaders({
+        Authorization: basicAuthHeader,
+      });
+    }
+
+    const page = await context.newPage();
+
+    for (const path of paths) {
+      const url = new URL(path, `${baseUrl}/`).toString();
+      const response = await page.goto(url, { timeout, waitUntil: 'domcontentloaded' });
+
+      assert.equal(response?.status(), 200, `${url} did not return HTTP 200`);
+
+      if (path === '/donate/') {
+        await expectVisible(page, 'text=Gift Aid', 'Gift Aid content');
+        await expectVisible(page, 'text=Continue to secure donation', 'donation action');
+      }
+
+      await recordAxeCheck({
+        label: `${viewport.name} ${path}`,
+        page,
+        report,
+        selector: 'body',
+        viewport,
+      });
+    }
+
+    await context.close();
+  }
+} finally {
+  await browser.close();
+}
+
+const reportPath = join(artifactDir, `accessibility-smoke-${stamp()}.json`);
+writeFileSync(reportPath, `${JSON.stringify(report, null, 2)}\n`);
+
+for (const check of report.checks) {
+  assert.deepEqual(check.violations, [], `${check.label} has accessibility violations`);
+}
+
+console.log(`Accessibility QA report: ${reportPath}`);
+
+async function expectVisible(page, selector, label) {
+  const locator = page.locator(selector).first();
+  assert.equal(await locator.isVisible(), true, `${label} was not visible`);
+}
+
+async function recordAxeCheck({ label, page, report, selector, viewport }) {
+  const results = await new AxeBuilder({ page }).include(selector).analyze();
+  const violations = results.violations.map((violation) => ({
+    id: violation.id,
+    impact: violation.impact,
+    help: violation.help,
+    nodes: violation.nodes.map((node) => ({
+      target: node.target,
+      summary: node.failureSummary,
+    })),
+  }));
+
+  report.checks.push({
+    label,
+    selector,
+    viewport,
+    violations,
+  });
+}
+
+function normaliseBaseUrl(value) {
+  return value.replace(/\/+$/, '');
+}
+
+function stamp() {
+  return new Date().toISOString().replace(/[:.]/g, '-');
+}
+
+function getBasicAuthHeader() {
+  const username = process.env.QA_BASIC_AUTH_USER;
+  const password = process.env.QA_BASIC_AUTH_PASSWORD;
+
+  if (!username || !password) {
+    return null;
+  }
+
+  return `Basic ${Buffer.from(`${username}:${password}`).toString('base64')}`;
+}

@@ -81,6 +81,14 @@ test('QA harness includes static analysis and staged-file hooks', () => {
 
   assert.equal(pkg.scripts['qa:static'], 'node scripts/qa/static-check.mjs');
   assert.equal(pkg.scripts['qa:audit'], 'node scripts/qa/security-audit.mjs');
+  assert.equal(pkg.scripts['qa:a11y'], 'node scripts/qa/accessibility-smoke.mjs');
+  assert.equal(pkg.scripts['qa:donation:tools'], 'node scripts/qa/donation-tools.mjs');
+  assert.match(pkg.scripts['qa:donation'], /QA_OSV_SCANNER=1/);
+  assert.match(pkg.scripts['qa:donation'], /qa:donation:tools/);
+  assert.match(pkg.scripts['qa:donation'], /QA_EXPECT_DONATE=1/);
+  assert.match(pkg.scripts['qa:donation'], /QA_EXPECT_CIVICRM=1/);
+  assert.match(pkg.scripts['qa:donation'], /QA_VISUAL_PATHS=\/donate\//);
+  assert.match(pkg.scripts['qa:donation'], /QA_A11Y_PATHS=\/donate\//);
   assert.equal(pkg.scripts.lint, 'npm run lint:js && npm run lint:styles');
   assert.equal(pkg.scripts['lint:js'], 'eslint .');
   assert.equal(pkg.scripts['lint:styles'], 'stylelint "resources/assets/styles/**/*.scss"');
@@ -96,6 +104,8 @@ test('QA harness includes static analysis and staged-file hooks', () => {
   assert.match(read('phpstan.neon.dist'), /level:\s+max/);
   assert.match(read('phpstan.neon.dist'), /maximumNumberOfProcesses:\s+8/);
   assert.ok('phpstan/phpstan' in composer['require-dev']);
+  assert.ok('@axe-core/playwright' in pkg.devDependencies);
+  assert.ok('playwright' in pkg.devDependencies);
   assert.ok('wp-coding-standards/wpcs' in composer['require-dev']);
   assert.ok(existsSync('phpstan.neon.dist'));
   assert.ok(existsSync('eslint.config.js'));
@@ -103,4 +113,15 @@ test('QA harness includes static analysis and staged-file hooks', () => {
   assert.ok(existsSync('.prettierrc.json'));
   assert.ok(existsSync('.husky/pre-commit'));
   assert.ok(existsSync('.husky/pre-push'));
+  assert.ok(existsSync('scripts/qa/accessibility-smoke.mjs'));
+  assert.ok(existsSync('scripts/qa/donation-tools.mjs'));
+  assert.match(read('scripts/qa/donation-tools.mjs'), /Stripe CLI/);
+  assert.match(read('scripts/qa/donation-tools.mjs'), /CiviCRM CLI/);
+  assert.match(read('scripts/qa/donation-tools.mjs'), /Gitleaks|TruffleHog/);
+  assert.match(read('scripts/qa/donation-tools.mjs'), /OSV scanner/);
+  assert.match(read('scripts/qa/donation-tools.mjs'), /Lighthouse CI/);
+  assert.match(read('docs/qa-harness.md'), /qa:donation/);
+  assert.match(read('docs/qa-harness.md'), /Stripe CLI/);
+  assert.match(read('docs/qa-harness.md'), /Gitleaks or TruffleHog/);
+  assert.match(read('docs/qa-harness.md'), /Lighthouse CI/);
 });

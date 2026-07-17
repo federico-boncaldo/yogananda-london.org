@@ -12,7 +12,10 @@ npm run qa:static
 npm run qa:audit
 npm run qa:wp
 npm run qa:site
+npm run qa:a11y
 npm run qa:visual
+npm run qa:donation:tools
+npm run qa:donation
 ```
 
 `qa:theme` runs static checks, source contract tests, and the production build.
@@ -43,14 +46,46 @@ That command runs `qa:audit`, so known dependency advisories are caught before p
 
 `qa:site` checks important public routes, fails on visible fatal/error output, and verifies the Donate/Gift Aid page contract.
 
-`qa:visual` captures desktop and mobile screenshots for the configured pages. It requires Playwright to be installed locally:
+`qa:a11y` runs Axe accessibility checks through Playwright. It checks `/donate/` by default and writes a JSON report to `/tmp/yogananda-qa`.
 
-```sh
-npm install --save-dev playwright
-npx playwright install chromium
-```
+`qa:visual` captures desktop and mobile screenshots for the configured pages. It fails when browser console warnings/errors are recorded unless `QA_VISUAL_ALLOW_CONSOLE=1` is set for an intentionally noisy environment.
 
 Screenshots and JSON reports are written outside the repository by default.
+
+`qa:donation:tools` checks the external tools needed for a release-grade donation/payment flow:
+
+- Stripe CLI, for webhook forwarding and sandbox event tests.
+- CiviCRM CLI `cv`, for reliable CiviCRM config/API assertions.
+- OSV-Scanner, for dependency vulnerability checks beyond npm/composer audit.
+- Lighthouse CI, for performance and browser best-practices checks.
+- Gitleaks or TruffleHog, for secret scanning before Stripe keys or webhook secrets enter the workflow.
+
+Install examples on macOS:
+
+```sh
+brew install stripe/stripe-cli/stripe
+brew install civicrm/civicrm-cv/cv
+brew install gitleaks
+brew install osv-scanner
+npm install -g @lhci/cli
+```
+
+Use TruffleHog instead of Gitleaks if preferred:
+
+```sh
+brew install trufflesecurity/trufflehog/trufflehog
+QA_DONATION_SECRET_SCANNER=trufflehog npm run qa:donation:tools
+```
+
+For local exploratory work only, missing external tools can be reported as skipped:
+
+```sh
+QA_DONATION_ALLOW_MISSING_TOOLS=1 npm run qa:donation:tools
+```
+
+Do not use that override for staging sign-off or production readiness.
+
+`qa:donation` is the full donation gate. It runs theme checks, dependency/security checks, the external-tool gate, WordPress/CiviCRM baseline checks, site-health checks including CiviCRM, visual checks on `/donate/`, and Axe accessibility checks on `/donate/`.
 
 ## Useful environment variables
 
@@ -67,6 +102,11 @@ QA_BASIC_AUTH_PASSWORD=temporary-password
 QA_NPM_AUDIT_LEVEL=high
 QA_NPM_AUDIT_OMIT=dev
 QA_OSV_SCANNER=1
+QA_DONATION_ALLOW_MISSING_TOOLS=1
+QA_DONATION_SECRET_SCANNER=gitleaks
+QA_DONATION_SECRET_SCANNER=trufflehog
+QA_VISUAL_ALLOW_CONSOLE=1
+QA_A11Y_PATHS=/donate/
 ```
 
 Use `QA_BASE_URL` for staging. If staging is protected with HTTP Basic Auth, set `QA_BASIC_AUTH_USER` and `QA_BASIC_AUTH_PASSWORD` in your shell for that command only.
@@ -75,5 +115,6 @@ Use `QA_BASE_URL` for staging. If staging is protected with HTTP Basic Auth, set
 
 - The harness does not send test emails or submit real donations.
 - The Gift Aid wording remains draft stakeholder copy until approved.
+- Stripe CLI tests must use sandbox/test mode only.
 - Keep generated screenshots, reports, `vendor/`, `node_modules/`, and built assets out of Git.
 - WPScan is useful for WordPress plugin/theme vulnerability intelligence, but it needs a WPScan API token and should be run intentionally during staging or maintenance checks rather than in the default local hook.
