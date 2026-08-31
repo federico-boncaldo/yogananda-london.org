@@ -15,7 +15,7 @@ This checklist is the accountability record for the donation, Gift Aid, and paym
 ## Branch Preparation
 
 - [ ] Popup branch approved.
-- [ ] Popup changes merged into `feature/donation-gift-aid-demo`.
+- [x] Popup changes merged into `feature/donation-gift-aid-demo`.
 - [ ] Donation branch rebased or merged cleanly against current `master`.
 - [ ] Theme branch checks pass locally.
 - [ ] Donation branch pushed to GitHub for review.

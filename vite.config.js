@@ -18,6 +18,7 @@ export default defineConfig({
         'resources/assets/styles/editor.scss',
         'resources/assets/scripts/editor.js',
         'resources/assets/scripts/customizer.js',
+        'resources/assets/scripts/admin/monastic-popup-admin.js',
       ],
       refresh: true,
       assets: [

@@ -3,11 +3,12 @@ import { existsSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
 const checks = [];
+const allowMissingTools = process.env.QA_STATIC_ALLOW_MISSING_TOOLS === '1';
 
 runPhpSyntaxChecks();
 runIfAvailable('vendor/bin/pint', ['--test'], 'Laravel Pint');
 runIfAvailable('vendor/bin/phpcs', [], 'PHP_CodeSniffer');
-runIfAvailable('vendor/bin/phpstan', ['analyse', '--debug', '--memory-limit=512M'], 'PHPStan');
+runIfAvailable('vendor/bin/phpstan', ['analyse', '--debug', '--memory-limit=1G'], 'PHPStan');
 
 const failed = checks.filter((check) => check.status === 'failed');
 
@@ -53,7 +54,7 @@ function runIfAvailable(binary, args, label) {
   if (!existsSync(binary)) {
     checks.push({
       name: label,
-      status: 'skipped',
+      status: allowMissingTools ? 'skipped' : 'failed',
       detail: `${binary} not installed`,
     });
     return;

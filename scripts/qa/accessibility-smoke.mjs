@@ -11,6 +11,8 @@ const baseUrl = normaliseBaseUrl(
 );
 const basicAuthHeader = getBasicAuthHeader();
 const ignoreHTTPSErrors = process.env.QA_IGNORE_HTTPS_ERRORS !== '0';
+const expectPopup = process.env.QA_EXPECT_POPUP === '1';
+const expectPopupImage = process.env.QA_EXPECT_POPUP_IMAGE === '1';
 const paths = (process.env.QA_A11Y_PATHS || '/donate/')
   .split(',')
   .map((path) => path.trim())
@@ -66,6 +68,35 @@ try {
       });
     }
 
+    if (expectPopup) {
+      await clearPopupStorage(page);
+      await page.goto(`${baseUrl}/`, { timeout, waitUntil: 'domcontentloaded' });
+      await page.waitForSelector('[data-monastic-visit-popup]:not([hidden])', { timeout });
+
+      await recordAxeCheck({
+        label: `${viewport.name} popup`,
+        page,
+        report,
+        selector: '[data-monastic-visit-popup]',
+        viewport,
+      });
+
+      if (expectPopupImage) {
+        await page.locator('[data-monastic-popup-image-trigger]').click();
+        await page.waitForSelector('[data-monastic-popup-image-viewer]:not([hidden])', {
+          timeout,
+        });
+
+        await recordAxeCheck({
+          label: `${viewport.name} expanded popup image`,
+          page,
+          report,
+          selector: '[data-monastic-popup-image-viewer]',
+          viewport,
+        });
+      }
+    }
+
     await context.close();
   }
 } finally {
@@ -103,6 +134,18 @@ async function recordAxeCheck({ label, page, report, selector, viewport }) {
     selector,
     viewport,
     violations,
+  });
+}
+
+async function clearPopupStorage(page) {
+  await page.addInitScript(() => {
+    for (const storage of [window.localStorage, window.sessionStorage]) {
+      for (const key of Object.keys(storage)) {
+        if (key.startsWith('yogananda:monastic-visit-popup')) {
+          storage.removeItem(key);
+        }
+      }
+    }
   });
 }
 

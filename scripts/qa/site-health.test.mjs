@@ -88,6 +88,26 @@ test('donation page keeps the Gift Aid and paper-form contract', async () => {
   assert.equal(countMatches(html, /<li[^>]*class=["'][^"']*menu-item-donate/g), 2);
 });
 
+test('monastic visit popup exposes accessible modal markup when enabled', async () => {
+  if (process.env.QA_EXPECT_POPUP !== '1') {
+    return;
+  }
+
+  const { html } = await fetchHtml('/');
+
+  assert.match(html, /data-monastic-visit-popup/);
+  assert.match(html, /role=["']dialog["']/);
+  assert.match(html, /aria-modal=["']true["']/);
+  assert.match(html, /aria-labelledby=["']monastic-visit-popup-title["']/);
+  assert.match(html, /aria-label=["']Close monastic visit notice["']/);
+  assert.match(html, /data-popup-frequency=["'](?:daily|content_update|session)["']/);
+
+  if (process.env.QA_EXPECT_POPUP_IMAGE === '1') {
+    assert.match(html, /monastic-visit-popup__image/);
+    assert.match(html, /monastic-visit-popup__image-element/);
+  }
+});
+
 function normaliseBaseUrl(value) {
   return value.replace(/\/+$/, '');
 }

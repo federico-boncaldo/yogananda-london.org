@@ -7,13 +7,17 @@ use Illuminate\Support\Facades\Vite;
 /**
  * Inject styles into the block editor.
  */
-add_filter('block_editor_settings_all', function (array $settings): array {
-    $style = Vite::asset('resources/assets/styles/editor.scss');
-    $styles = $settings['styles'] ?? [];
-
-    if (! is_array($styles)) {
-        $styles = [];
+add_filter('block_editor_settings_all', function ($settings): array {
+    if (! is_array($settings)) {
+        $settings = [];
     }
+
+    if (! isset($settings['styles']) || ! is_array($settings['styles'])) {
+        $settings['styles'] = [];
+    }
+
+    $style = Vite::asset('resources/assets/styles/editor.scss');
+    $styles = $settings['styles'];
 
     $styles[] = [
         'css' => "@import url('{$style}')",
@@ -35,7 +39,7 @@ add_action('admin_head', function () {
         $dependencies = json_decode(Vite::content('editor.deps.json'), true);
 
         if (! is_array($dependencies)) {
-            return;
+            $dependencies = [];
         }
 
         foreach ($dependencies as $dependency) {
@@ -49,7 +53,7 @@ add_action('admin_head', function () {
         }
     }
 
-    // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Vite renders the required script tags.
+    // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Vite renders trusted script tags for theme build assets.
     echo Vite::withEntryPoints([
         'resources/assets/scripts/editor.js',
     ])->toHtml();

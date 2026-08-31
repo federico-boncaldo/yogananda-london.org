@@ -43,6 +43,7 @@
     "phpstan/phpstan": "^2.1",
     "squizlabs/php_codesniffer": "^3.13",
     "szepeviktor/phpstan-wordpress": "^2.0",
+    "tomasvotruba/cognitive-complexity": "^1.2",
     "wp-coding-standards/wpcs": "^3.2"
   },
   "suggest": {
@@ -62,6 +63,6 @@
     "post-autoload-dump": [
       "Roots\\Acorn\\ComposerScripts::postAutoloadDump"
     ],
-    "qa:php": "phpstan analyse --debug --memory-limit=512M && phpcs && vendor/bin/pint --test"
+    "qa:php": "phpstan analyse --debug --memory-limit=1G && phpcs && vendor/bin/pint --test"
   }
 }

@@ -8,6 +8,7 @@ const baseUrl = normaliseBaseUrl(
   process.env.QA_BASE_URL || 'https://yoganandalondon-local.ddev.site',
 );
 const basicAuthHeader = getBasicAuthHeader();
+const waitUntil = process.env.QA_VISUAL_WAIT_UNTIL || 'domcontentloaded';
 const ignoreHTTPSErrors = process.env.QA_IGNORE_HTTPS_ERRORS !== '0';
 const allowConsoleMessages = process.env.QA_VISUAL_ALLOW_CONSOLE === '1';
 const paths = (process.env.QA_VISUAL_PATHS || '/,/donate/,/attend-a-meditation/,/about-us/')
@@ -53,7 +54,7 @@ try {
     for (const path of paths) {
       const url = new URL(path, `${baseUrl}/`).toString();
       const response = await page.goto(url, {
-        waitUntil: 'networkidle',
+        waitUntil,
         timeout: Number(process.env.QA_TIMEOUT_MS || 30000),
       });
 
@@ -64,6 +65,23 @@ try {
 
       if (path === '/') {
         await expectVisible(page, '.menu-item-donate', 'Donate menu item');
+      }
+
+      if (path === '/' && process.env.QA_EXPECT_POPUP === '1') {
+        await expectVisible(page, '[data-monastic-visit-popup]', 'monastic visit popup');
+        await expectVisible(
+          page,
+          '[aria-label="Close monastic visit notice"]',
+          'monastic visit popup close button',
+        );
+
+        if (process.env.QA_EXPECT_POPUP_IMAGE === '1') {
+          await expectVisible(
+            page,
+            '.monastic-visit-popup__image img',
+            'monastic visit popup image',
+          );
+        }
       }
 
       if (path === '/donate/') {
