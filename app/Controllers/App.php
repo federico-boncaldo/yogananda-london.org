@@ -13,9 +13,10 @@ class App
     {
         if (is_home()) {
             $home = get_option('page_for_posts');
+            $home = is_numeric($home) ? (int) $home : 0;
 
-            if (is_numeric($home) && (int) $home > 0) {
-                return get_the_title((int) $home);
+            if ($home > 0) {
+                return get_the_title($home);
             }
 
             return __('Latest Posts', 'sage');

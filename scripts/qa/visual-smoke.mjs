@@ -11,7 +11,7 @@ const basicAuthHeader = getBasicAuthHeader();
 const waitUntil = process.env.QA_VISUAL_WAIT_UNTIL || 'domcontentloaded';
 const ignoreHTTPSErrors = process.env.QA_IGNORE_HTTPS_ERRORS !== '0';
 const allowConsoleMessages = process.env.QA_VISUAL_ALLOW_CONSOLE === '1';
-const paths = (process.env.QA_VISUAL_PATHS || '/,/attend-a-meditation/,/about-us/')
+const paths = (process.env.QA_VISUAL_PATHS || '/,/donate/,/attend-a-meditation/,/about-us/')
   .split(',')
   .map((path) => path.trim())
   .filter(Boolean);
@@ -63,6 +63,10 @@ try {
       const bodyText = await page.locator('body').innerText();
       assertHealthyText(bodyText, url);
 
+      if (path === '/') {
+        await expectVisible(page, '.menu-item-donate', 'Donate menu item');
+      }
+
       if (path === '/' && process.env.QA_EXPECT_POPUP === '1') {
         await expectVisible(page, '[data-monastic-visit-popup]', 'monastic visit popup');
         await expectVisible(
@@ -78,6 +82,16 @@ try {
             'monastic visit popup image',
           );
         }
+      }
+
+      if (path === '/donate/') {
+        await expectVisible(page, 'text=Gift Aid', 'Gift Aid section');
+        await expectVisible(page, 'text=Continue to secure donation', 'donation action button');
+        await expectVisible(
+          page,
+          'text=Download the existing donation form',
+          'existing donation form link',
+        );
       }
 
       const screenshot = join(artifactDir, `${safeName(path)}-${viewport.name}.png`);

@@ -17,10 +17,12 @@ add_filter('block_editor_settings_all', function ($settings): array {
     }
 
     $style = Vite::asset('resources/assets/styles/editor.scss');
+    $styles = $settings['styles'];
 
-    $settings['styles'][] = [
+    $styles[] = [
         'css' => "@import url('{$style}')",
     ];
+    $settings['styles'] = $styles;
 
     return $settings;
 });

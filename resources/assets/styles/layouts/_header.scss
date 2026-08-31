@@ -16,21 +16,87 @@
     display: flex;
     align-items: center;
 
+    > div,
+    .nav {
+      display: flex;
+      align-items: center;
+    }
+
+    .nav {
+      margin: 0;
+    }
+
     a {
+      display: inline-flex;
+      min-height: 36px;
+      align-items: center;
       color: #000;
       text-decoration: none;
       font-size: 20px;
+      line-height: 1;
       padding: 0 20px;
 
       &.social-button {
-        padding-left: 10px;
-        padding-right: 10px;
+        justify-content: center;
+        min-width: 36px;
+        margin-left: 8px;
+        padding-left: 6px;
+        padding-right: 6px;
+
+        img {
+          display: block;
+        }
+      }
+
+      &.donate-menu-link {
+        justify-content: center;
+        background-color: #bb8c36;
+        border: 1px solid #bb8c36;
+        border-radius: 4px;
+        color: #fff;
+        margin-left: 10px;
+        padding: 0 18px;
+        text-shadow: none;
+
+        &:hover,
+        &:focus {
+          background-color: #8a641f;
+          border-color: #8a641f;
+          text-decoration: none;
+        }
       }
 
       @media screen and (min-width: 0) and (max-width: 1000px) {
         &.social-button {
           display: none;
         }
+      }
+    }
+  }
+}
+
+.mobmenu-content {
+  #mobmenuleft,
+  #mobmenuright {
+    .menu-item-donate {
+      margin: 12px 18px;
+
+      > a.donate-menu-link,
+      > a.donate-menu-link:visited {
+        display: block;
+        padding: 12px 18px;
+        background-color: #bb8c36;
+        border-radius: 4px;
+        color: #fff;
+        font-weight: 600;
+        text-align: center;
+      }
+
+      > a.donate-menu-link:hover,
+      > a.donate-menu-link:focus {
+        background-color: #8a641f;
+        color: #fff;
+        text-decoration: none;
       }
     }
   }
@@ -53,10 +119,6 @@
         color: #fff;
       }
     }
-  }
-
-  .btn-blue.donate-button {
-    border: 1px solid white;
   }
 }
 
@@ -89,17 +151,5 @@
         display: none;
       }
     }
-  }
-}
-
-@media screen and (min-width: 0) and (max-width: 1000px) {
-  .btn-blue.donate-button {
-    display: none;
-  }
-}
-
-@media screen and (min-width: 1001px) {
-  .btn-blue.donate-button {
-    display: block;
   }
 }

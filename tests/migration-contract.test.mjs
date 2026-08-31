@@ -43,14 +43,26 @@ test('WordPress loads from Sage 11 root theme files', () => {
 
 test('custom UI markers remain in templates and styles', () => {
   const header = read('resources/views/partials/header.blade.php');
+  const filters = read('app/filters.php');
+  const donationTemplate = read('resources/views/template-donation.blade.php');
   const styles = read('resources/assets/styles/main.scss');
 
   assert.match(header, /London_Centre_Logo_white\.png/);
   assert.match(header, /YoganandaLondon/);
   assert.match(header, /instagram\.com\/yoganandalondon/);
-  assert.match(header, /Donate/);
+  assert.match(filters, /menu-item-donate/);
+  assert.match(filters, /home_url\('\/donate\/'\)/);
+  assert.match(filters, /Donate/);
+  assert.match(donationTemplate, /Gift Aid/);
+  assert.match(donationTemplate, /Donations_to_the_London_Centre_SRF-Dec-2018\.pdf/);
+  assert.doesNotMatch(donationTemplate, /demo/i);
   assert.match(styles, /layouts\/header/);
+  assert.match(styles, /layouts\/donation/);
   assert.match(styles, /layouts\/pages/);
+  assert.ok(
+    styles.indexOf('@import "layouts/pages";') < styles.indexOf('@import "layouts/donation";'),
+    'Donation styles must load after generic page styles.',
+  );
 });
 
 test('comments keep the WordPress comments_template flow', () => {
@@ -73,12 +85,19 @@ test('QA harness includes static analysis and staged-file hooks', () => {
   assert.equal(pkg.scripts['qa:static'], 'node scripts/qa/static-check.mjs');
   assert.equal(pkg.scripts['qa:audit'], 'node scripts/qa/security-audit.mjs');
   assert.equal(pkg.scripts['qa:a11y'], 'node scripts/qa/accessibility-smoke.mjs');
+  assert.equal(pkg.scripts['qa:donation:tools'], 'node scripts/qa/donation-tools.mjs');
+  assert.match(pkg.scripts['qa:donation'], /QA_OSV_SCANNER=1/);
+  assert.match(pkg.scripts['qa:donation'], /qa:donation:tools/);
+  assert.match(pkg.scripts['qa:donation'], /QA_EXPECT_DONATE=1/);
+  assert.match(pkg.scripts['qa:donation'], /QA_EXPECT_CIVICRM=1/);
+  assert.match(pkg.scripts['qa:donation'], /QA_VISUAL_PATHS=\/donate\//);
+  assert.match(pkg.scripts['qa:donation'], /QA_A11Y_PATHS=\/donate\//);
   assert.equal(pkg.scripts.lint, 'npm run lint:js && npm run lint:styles');
   assert.equal(pkg.scripts['lint:js'], 'eslint .');
   assert.equal(pkg.scripts['lint:styles'], 'stylelint "resources/assets/styles/**/*.scss"');
   assert.equal(
     pkg.scripts.format,
-    'prettier --check eslint.config.js "scripts/qa/**/*.mjs" "tests/**/*.mjs" package.json .prettierrc.json .stylelintrc.json',
+    'prettier --check eslint.config.js "scripts/qa/**/*.mjs" "tests/**/*.mjs" "docs/**/*.md" package.json .prettierrc.json .stylelintrc.json',
   );
   assert.equal(pkg.scripts.prepare, 'husky');
   assert.equal(
@@ -87,6 +106,7 @@ test('QA harness includes static analysis and staged-file hooks', () => {
   );
   assert.ok('phpstan/phpstan' in composer['require-dev']);
   assert.ok('@axe-core/playwright' in pkg.devDependencies);
+  assert.ok('playwright' in pkg.devDependencies);
   assert.ok('tomasvotruba/cognitive-complexity' in composer['require-dev']);
   assert.ok('wp-coding-standards/wpcs' in composer['require-dev']);
   assert.match(phpstan, /level:\s+max/);
@@ -108,31 +128,20 @@ test('QA harness includes static analysis and staged-file hooks', () => {
   assert.ok(existsSync('.husky/pre-commit'));
   assert.ok(existsSync('.husky/pre-push'));
   assert.ok(existsSync('scripts/qa/accessibility-smoke.mjs'));
-});
-
-test('QA harness defaults stay independent from the donation flow', () => {
-  const siteHealth = read('scripts/qa/site-health.test.mjs');
-  const wpBaseline = read('scripts/qa/wp-baseline.mjs');
-  const visualSmoke = read('scripts/qa/visual-smoke.mjs');
-  const accessibilitySmoke = read('scripts/qa/accessibility-smoke.mjs');
-
-  assert.doesNotMatch(siteHealth, /'\/donate\/'/);
-  assert.doesNotMatch(siteHealth, /donation demo page/i);
-  assert.match(wpBaseline, /QA_EXPECT_DONATE === '1'/);
-  assert.match(wpBaseline, /QA_EXPECT_DONATE_TEMPLATE/);
-  assert.match(wpBaseline, /template-donation\.blade\.php/);
-  assert.doesNotMatch(wpBaseline, /template-donation-demo/);
-  assert.match(visualSmoke, /QA_VISUAL_WAIT_UNTIL/);
-  assert.match(visualSmoke, /domcontentloaded/);
-  assert.match(visualSmoke, /QA_IGNORE_HTTPS_ERRORS/);
-  assert.match(visualSmoke, /ignoreHTTPSErrors/);
-  assert.match(visualSmoke, /QA_VISUAL_ALLOW_CONSOLE/);
-  assert.match(visualSmoke, /Visual QA found console warnings or errors/);
-  assert.match(accessibilitySmoke, /AxeBuilder/);
-  assert.match(accessibilitySmoke, /QA_EXPECT_POPUP/);
-  assert.match(accessibilitySmoke, /data-monastic-popup-image-viewer/);
-  assert.doesNotMatch(visualSmoke, /Gift Aid/);
-  assert.doesNotMatch(visualSmoke, /\/donate\//);
+  assert.ok(existsSync('scripts/qa/donation-tools.mjs'));
+  assert.match(read('scripts/qa/donation-tools.mjs'), /Stripe CLI/);
+  assert.match(read('scripts/qa/donation-tools.mjs'), /CiviCRM CLI/);
+  assert.match(read('scripts/qa/donation-tools.mjs'), /Gitleaks|TruffleHog/);
+  assert.match(read('scripts/qa/donation-tools.mjs'), /OSV scanner/);
+  assert.match(read('scripts/qa/donation-tools.mjs'), /Lighthouse CI/);
+  assert.match(read('docs/qa-harness.md'), /qa:donation/);
+  assert.match(read('docs/qa-harness.md'), /Stripe CLI/);
+  assert.match(read('docs/qa-harness.md'), /Gitleaks or TruffleHog/);
+  assert.match(read('docs/qa-harness.md'), /Lighthouse CI/);
+  assert.match(read('scripts/qa/site-health.test.mjs'), /monastic visit popup/);
+  assert.match(read('scripts/qa/visual-smoke.mjs'), /QA_EXPECT_POPUP/);
+  assert.match(read('scripts/qa/accessibility-smoke.mjs'), /QA_EXPECT_POPUP/);
+  assert.match(read('scripts/qa/wp-baseline.mjs'), /monasticVisitPopup/);
 });
 
 test('monastic visit popup is wired through WordPress settings and theme assets', () => {

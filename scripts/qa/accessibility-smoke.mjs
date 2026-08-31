@@ -13,6 +13,10 @@ const basicAuthHeader = getBasicAuthHeader();
 const ignoreHTTPSErrors = process.env.QA_IGNORE_HTTPS_ERRORS !== '0';
 const expectPopup = process.env.QA_EXPECT_POPUP === '1';
 const expectPopupImage = process.env.QA_EXPECT_POPUP_IMAGE === '1';
+const paths = (process.env.QA_A11Y_PATHS || '/donate/')
+  .split(',')
+  .map((path) => path.trim())
+  .filter(Boolean);
 const timeout = Number(process.env.QA_TIMEOUT_MS || 30000);
 
 const viewports = [
@@ -21,11 +25,6 @@ const viewports = [
 ];
 
 mkdirSync(artifactDir, { recursive: true });
-
-if (!expectPopup) {
-  console.log('Accessibility smoke skipped: set QA_EXPECT_POPUP=1 to scan the popup feature.');
-  process.exit(0);
-}
 
 const browser = await chromium.launch();
 const report = {
@@ -48,31 +47,54 @@ try {
     }
 
     const page = await context.newPage();
-    await clearPopupStorage(page);
-    await page.goto(`${baseUrl}/`, { timeout, waitUntil: 'domcontentloaded' });
-    await page.waitForSelector('[data-monastic-visit-popup]:not([hidden])', { timeout });
 
-    await recordAxeCheck({
-      label: `${viewport.name} popup`,
-      page,
-      report,
-      selector: '[data-monastic-visit-popup]',
-      viewport,
-    });
+    for (const path of paths) {
+      const url = new URL(path, `${baseUrl}/`).toString();
+      const response = await page.goto(url, { timeout, waitUntil: 'domcontentloaded' });
 
-    if (expectPopupImage) {
-      await page.locator('[data-monastic-popup-image-trigger]').click();
-      await page.waitForSelector('[data-monastic-popup-image-viewer]:not([hidden])', {
-        timeout,
-      });
+      assert.equal(response?.status(), 200, `${url} did not return HTTP 200`);
+
+      if (path === '/donate/') {
+        await expectVisible(page, 'text=Gift Aid', 'Gift Aid content');
+        await expectVisible(page, 'text=Continue to secure donation', 'donation action');
+      }
 
       await recordAxeCheck({
-        label: `${viewport.name} expanded popup image`,
+        label: `${viewport.name} ${path}`,
         page,
         report,
-        selector: '[data-monastic-popup-image-viewer]',
+        selector: 'body',
         viewport,
       });
+    }
+
+    if (expectPopup) {
+      await clearPopupStorage(page);
+      await page.goto(`${baseUrl}/`, { timeout, waitUntil: 'domcontentloaded' });
+      await page.waitForSelector('[data-monastic-visit-popup]:not([hidden])', { timeout });
+
+      await recordAxeCheck({
+        label: `${viewport.name} popup`,
+        page,
+        report,
+        selector: '[data-monastic-visit-popup]',
+        viewport,
+      });
+
+      if (expectPopupImage) {
+        await page.locator('[data-monastic-popup-image-trigger]').click();
+        await page.waitForSelector('[data-monastic-popup-image-viewer]:not([hidden])', {
+          timeout,
+        });
+
+        await recordAxeCheck({
+          label: `${viewport.name} expanded popup image`,
+          page,
+          report,
+          selector: '[data-monastic-popup-image-viewer]',
+          viewport,
+        });
+      }
     }
 
     await context.close();
@@ -89,6 +111,11 @@ for (const check of report.checks) {
 }
 
 console.log(`Accessibility QA report: ${reportPath}`);
+
+async function expectVisible(page, selector, label) {
+  const locator = page.locator(selector).first();
+  assert.equal(await locator.isVisible(), true, `${label} was not visible`);
+}
 
 async function recordAxeCheck({ label, page, report, selector, viewport }) {
   const results = await new AxeBuilder({ page }).include(selector).analyze();

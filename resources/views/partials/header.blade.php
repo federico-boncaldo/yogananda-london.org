@@ -15,7 +15,5 @@
     <a href="https://www.instagram.com/yoganandalondon" target="_blank" rel="noopener noreferrer" class="social-button">
       <img src="https://www.yoganandalondon.org/self-realisation-fellowship-img/instagram-icon.png" height="31" width="31">
     </a>
-
-    <button class="btn-blue donate-button"><a href="https://www.yoganandalondon.org/self-realisation-fellowship-img/Donations_to_the_London_Centre_SRF-Dec-2018.pdf" target="_blank">Donate</a></button>
   </nav>
 </header>
