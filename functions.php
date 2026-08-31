@@ -15,7 +15,7 @@ Application::configure()
     ])
     ->boot();
 
-collect(['helpers', 'setup', 'filters', 'admin'])
+collect(['helpers', 'setup', 'filters', 'admin', 'monastic-popup'])
     ->each(function ($file) {
         $path = __DIR__."/app/{$file}.php";
 

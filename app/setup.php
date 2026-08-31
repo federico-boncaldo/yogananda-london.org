@@ -7,7 +7,15 @@ use Illuminate\Support\Facades\Vite;
 /**
  * Inject styles into the block editor.
  */
-add_filter('block_editor_settings_all', function ($settings) {
+add_filter('block_editor_settings_all', function ($settings): array {
+    if (! is_array($settings)) {
+        $settings = [];
+    }
+
+    if (! isset($settings['styles']) || ! is_array($settings['styles'])) {
+        $settings['styles'] = [];
+    }
+
     $style = Vite::asset('resources/assets/styles/editor.scss');
 
     $settings['styles'][] = [
@@ -26,15 +34,24 @@ add_action('admin_head', function () {
     }
 
     if (! Vite::isRunningHot()) {
-        $dependencies = json_decode(Vite::content('editor.deps.json'));
+        $dependencies = json_decode(Vite::content('editor.deps.json'), true);
+
+        if (! is_array($dependencies)) {
+            $dependencies = [];
+        }
 
         foreach ($dependencies as $dependency) {
+            if (! is_string($dependency)) {
+                continue;
+            }
+
             if (! wp_script_is($dependency)) {
                 wp_enqueue_script($dependency);
             }
         }
     }
 
+    // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Vite renders trusted script tags for theme build assets.
     echo Vite::withEntryPoints([
         'resources/assets/scripts/editor.js',
     ])->toHtml();

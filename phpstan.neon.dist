@@ -1,0 +1,25 @@
+includes:
+  - vendor/szepeviktor/phpstan-wordpress/extension.neon
+  - vendor/tomasvotruba/cognitive-complexity/config/extension.neon
+
+parameters:
+  level: max
+  paths:
+    - app
+    - functions.php
+    - index.php
+  excludePaths:
+    analyse:
+      - vendor
+      - node_modules
+      - public
+      - resources/views
+  bootstrapFiles:
+    - vendor/roots/acorn/src/Illuminate/Foundation/helpers.php
+  treatPhpDocTypesAsCertain: false
+  reportUnmatchedIgnoredErrors: false
+  cognitive_complexity:
+    function: 10
+    class: 50
+  parallel:
+    maximumNumberOfProcesses: 8

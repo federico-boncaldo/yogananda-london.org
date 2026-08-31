@@ -1,5 +1,5 @@
 // import external dependencies
-import 'jquery';
+import $ from 'jquery';
 
 // Import everything from autoload
 import './autoload/_bootstrap.js';
@@ -21,4 +21,4 @@ const routes = new Router({
 });
 
 // Load Events
-jQuery(document).ready(() => routes.loadEvents());
+$(document).ready(() => routes.loadEvents());

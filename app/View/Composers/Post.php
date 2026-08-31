@@ -9,7 +9,7 @@ class Post extends Composer
     /**
      * List of views served by this composer.
      *
-     * @var array
+     * @var array<string>
      */
     protected static $views = [
         'partials.page-header',
@@ -27,8 +27,10 @@ class Post extends Composer
         }
 
         if (is_home()) {
-            if ($home = get_option('page_for_posts', true)) {
-                return get_the_title($home);
+            $home = get_option('page_for_posts');
+
+            if (is_numeric($home) && (int) $home > 0) {
+                return get_the_title((int) $home);
             }
 
             return __('Latest Posts', 'sage');

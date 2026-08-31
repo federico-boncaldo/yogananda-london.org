@@ -23,10 +23,10 @@ npm install
 npm run dev
 ```
 
-The Vite dev URL defaults to the historical local URL from the Sage 9 config:
+Override the Vite dev URL when working against a local WordPress environment:
 
 ```sh
-APP_URL=http://localhost/MAMP/yogananda-london.org npm run dev
+APP_URL=https://yoganandalondon-local.ddev.site npm run dev
 ```
 
 For non-Bedrock production paths, the Vite base path defaults to `/wp-content/themes/sage/public/build/`. Override it if the deployed theme directory differs:

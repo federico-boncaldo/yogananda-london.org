@@ -36,12 +36,23 @@
     "roots/acorn": "^6.0"
   },
   "require-dev": {
-    "laravel/pint": "^1.20"
+    "dealerdirect/phpcodesniffer-composer-installer": "^1.1",
+    "laravel/pint": "^1.20",
+    "php-stubs/wordpress-stubs": "^6.8",
+    "phpcompatibility/phpcompatibility-wp": "^2.1",
+    "phpstan/phpstan": "^2.1",
+    "squizlabs/php_codesniffer": "^3.13",
+    "szepeviktor/phpstan-wordpress": "^2.0",
+    "tomasvotruba/cognitive-complexity": "^1.2",
+    "wp-coding-standards/wpcs": "^3.2"
   },
   "suggest": {
     "log1x/sage-directives": "A collection of useful Blade directives for WordPress and Sage (^1.0)."
   },
   "config": {
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    },
     "optimize-autoloader": true,
     "preferred-install": "dist",
     "sort-packages": true
@@ -51,6 +62,7 @@
   "scripts": {
     "post-autoload-dump": [
       "Roots\\Acorn\\ComposerScripts::postAutoloadDump"
-    ]
+    ],
+    "qa:php": "phpstan analyse --debug --memory-limit=1G && phpcs && vendor/bin/pint --test"
   }
 }
